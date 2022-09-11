@@ -1,17 +1,17 @@
 import tkinter as tk
-from tk_methods import methods
+from tk_methods import Methods
 
-class menubar(methods):
+class menubar(Methods):
   def __init__(self, window):
-    super().__init__
+    super().__init__(window)
     self.window = window
 
   def run_menu(self):
     menubar = tk.Menu(self.window)
 
     menu_1 = tk.Menu(menubar, tearoff=0)      
-    menu_1.add_command(label="새로만들기")
-    menu_1.add_command(label="열기")
+    menu_1.add_command(label="새로만들기", command = self.new_open)
+    menu_1.add_command(label="열기", command=self.file_open)
     menu_1.add_separator()
     menu_1.add_command(label="다른 이름으로 저장")
     menu_1.add_command(label="저장")
