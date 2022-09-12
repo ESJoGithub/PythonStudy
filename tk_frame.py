@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
-from mouse import MouseEvent
+from tk_mouse import MouseEvent
 from PIL import Image, ImageTk
 
 class Get_Frame(MouseEvent):
@@ -50,7 +50,7 @@ class Get_Frame(MouseEvent):
       canvas.configure(width=self.width, height=self.height, relief="raised")
       temp_width= self.width//2
       temp_height= self.height//2
-      canvas.create_image(temp_width, temp_height, image=photo)
+      canvas.create_image(temp_width, temp_height, image=photo, anchor="nw")
       
     else:
       canvas.configure(width=self.width, height=self.height, relief="raised", bg="white")

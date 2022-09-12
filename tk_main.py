@@ -1,8 +1,8 @@
 import tkinter as tk
-from menu import menubar
+from tk_menu import menubar
 
 from tkinter import Canvas, filedialog
-from frame import Get_Frame
+from tk_frame import Get_Frame
 import cv2
 from PIL import Image, ImageTk
 import numpy as np
