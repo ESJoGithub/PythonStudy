@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-from frame import Get_Frame
+from tk_frame import Get_Frame
 import cv2
 import numpy as np
 

@@ -1,5 +1,5 @@
 import tkinter as tk
-from methods import Methods
+from tk_methods import Methods
 
 class menubar(Methods):
   def __init__(self, window):
