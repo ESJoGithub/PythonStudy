@@ -1,5 +1,5 @@
 import tkinter as tk
-from tk_methods import Methods
+from methods import Methods
 
 class menubar(Methods):
   def __init__(self, window):
@@ -7,6 +7,7 @@ class menubar(Methods):
     self.window = window
 
   def run_menu(self):
+
     menubar = tk.Menu(self.window)
 
     menu_1 = tk.Menu(menubar, tearoff=0)      
