@@ -1,8 +1,5 @@
-from ctypes import resize
-from email.mime import image
 import tkinter as tk
 import tkinter.ttk as ttk
-from turtle import bgcolor, width
 from tk_mouse import MouseEvent
 from PIL import Image, ImageTk
 import cv2
@@ -25,11 +22,10 @@ class Get_Frame(MouseEvent):
     self.count = count
     self.origin = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
     self.cv2_img = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
-    self.tk_img = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
     self.paper=None
     self.changed = False
     self.cancel_li = []
-    self.temp=None
+    self.reload_li = []
   
   def get_filename(self, filename="제목없음"):
     if filename != "제목없음":

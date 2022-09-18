@@ -1,7 +1,4 @@
-from re import X
-from statistics import mode
 import tkinter as tk
-from typing_extensions import IntVar
 from tk_methods import Methods
 
 class menubar(Methods):

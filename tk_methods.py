@@ -1,6 +1,3 @@
-from distutils.command.install_egg_info import safe_name
-from imp import reload
-from statistics import mode
 import tkinter as tk
 from tkinter import VERTICAL, filedialog
 from tk_frame import Get_Frame
@@ -43,12 +40,12 @@ class Methods(Get_Frame):
 
   def cancel(self):
     img = self.sub_window.cancel_li.pop()
-    self.reload_li.append(img)
+    self.sub_window.reload_li.append(img)
     self.sub_window.cv2_img = img
     self.sub_window.paint_canvas(img)
 
   def reload(self):
-    img = self.reload_li.pop()
+    img = self.sub_window.reload_li.pop()
     self.sub_window.cancel_li.append(img)
     self.sub_window.cv2_img = img
     self.sub_window.paint_canvas(img)
