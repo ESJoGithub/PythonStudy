@@ -1,3 +1,4 @@
+from curses.ascii import isdigit
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -43,6 +44,20 @@ class MouseEvent:
       self.drag_pos=[point_x, point_y]
       self.widget.place(x = self.drag_pos[0], y = self.drag_pos[1])
   
+  def value_Check(self):
+    if self.isdigit():
+      if (int(self) <= 3840 and int(self) >= 0):
+        valid = True
+    elif self == "":
+      valid = True
+    return valid
+  
+  def value_error(self):
+    error_msg = tk.Message(self.window, text="잘못된 범위의 값을 입력하였습니다.", width=100, relief="solid")
+    error_msg.pack()
+
+
+
   def release(self, event):
       self.widget.place(x = self.drag_pos[0], y = self.drag_pos[1])
       self.dragging = False

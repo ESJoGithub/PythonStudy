@@ -41,7 +41,7 @@ class menubar(Methods):
     menu_3.add_command(label="gray, 흑백")
     menu_3.add_separator()
     menu_3.add_command(label="이미지 크기")
-    menu_3.add_command(label="캔버스 크기")
+    menu_3.add_command(label="캔버스 크기", command=self.reset_canvas_size)
     menu_3.add_separator()
     menu_3.add_command(label="이미지 180도 회전", command=lambda: self.rotation(mode=2))
     menu_3.add_command(label="이미지 90도 시계 방향 회전", command=lambda: self.rotation(mode=1))

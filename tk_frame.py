@@ -4,6 +4,7 @@ from tk_mouse import MouseEvent
 from PIL import Image, ImageTk
 import cv2
 import numpy as np
+import copy
 
 class Get_Frame(MouseEvent):
   def __init__(self, window, count=1, width = 1000, height = 510, x = 30, y = 0):
@@ -22,6 +23,7 @@ class Get_Frame(MouseEvent):
     self.count = count
     self.origin = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
     self.cv2_img = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
+    self.canvas_img = np.full(shape=(self.height, self.width, 3), fill_value=255, dtype=np.uint8)
     self.paper=None
     self.changed = False
     self.cancel_li = []
@@ -112,28 +114,34 @@ class Get_Frame(MouseEvent):
     
     return self.canvas
 
-  def paint_canvas(self, img):
-    self.temp = img
-    self.cancel_li.append(self.temp)
+  def paint_canvas(self, img, mode=None):
+    c_img = copy.copy(self.canvas_img)
+    if mode != "c":
+      self.cancel_li.append(c_img)
+    elif mode == "c":
+      self.reload_li.append(c_img)
+    self.canvas_img  = copy.copy(img)
     h, w, c = img.shape
     if not self.changed:
-      if h > w :
-        self.width = 500
-        self.height = 700
+      if h > w and self.width > self.height or h < w and self.width < self.height:
+        _width = self.height
+        _height = self.width
+        self.width = _width
+        self.height =_height
       else:
-        self.width = 1000
-        self.height = 500
-      if self.width/w <= (self.height-10)/h:
-        self.photo_h = (int)((self.width/w) * h)
-        src = cv2.resize(img, dsize = (self.width, self.photo_h))
-      elif self.width/w > (self.height-10)/h:
-        self.photo_w = (int)(((self.height-10)/h) * w)
-        src = cv2.resize(img, dsize = (self.photo_w, self.height-10))
+        _width = self.width
+        _height = self.height
+      if _width/w <= (_height-10)/h:
+        self.photo_h = (int)((_width/w) * h)
+        src = cv2.resize(img, dsize = (_width, self.photo_h))
+      elif _width/w > (_height-10)/h:
+        self.photo_w = (int)(((_height-10)/h) * w)
+        src = cv2.resize(img, dsize = (self.photo_w, _height-10))
     else:
       src = img
-    self.tk_img = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
+    tk_img = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
 
-    photo = Image.fromarray(self.tk_img)   
+    photo = Image.fromarray(tk_img)   
     # self.paper : Prevent PhotoImage object being garbage collected!!!
     self.paper = ImageTk.PhotoImage(image=photo, master=self.canvas)
     self.canvas.configure(width=self.width, height=self.height, relief="raised")

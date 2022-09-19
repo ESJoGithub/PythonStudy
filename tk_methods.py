@@ -4,7 +4,7 @@ from tk_frame import Get_Frame
 import cv2
 from PIL import Image, ImageTk
 import numpy as np
-
+import copy
 
 class Methods(Get_Frame):
   def __init__(self, window):
@@ -40,15 +40,17 @@ class Methods(Get_Frame):
 
   def cancel(self):
     img = self.sub_window.cancel_li.pop()
-    self.sub_window.reload_li.append(img)
-    self.sub_window.cv2_img = img
-    self.sub_window.paint_canvas(img)
+    self.sub_window.paint_canvas(img, mode = "c")
 
   def reload(self):
     img = self.sub_window.reload_li.pop()
-    self.sub_window.cancel_li.append(img)
-    self.sub_window.cv2_img = img
     self.sub_window.paint_canvas(img)
+
+  def reset_photo_size(self):
+    pass
+
+  def reset_canvas_size(self):
+    pass
 
   def rotation(self, mode=1):
     cv2_img = self.sub_window.cv2_img
