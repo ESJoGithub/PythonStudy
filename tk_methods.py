@@ -14,6 +14,7 @@ class Methods():
     self.count_frames = 0
     self.path = "C:\\Users\\user\\desktop"
     self.reload_li = []
+    self.checked = False
 
   def count_open(self):
     self.count_frames += 1
@@ -45,6 +46,38 @@ class Methods():
   def reload(self):
     img = self.sub_window.reload_li.pop()
     self.sub_window.paint_canvas(img)
+
+  def gray_menu(self):
+    r2G = Run_widget(self.window)
+    g_button = r2G.get_radio()
+    g_button.config(command=lambda: self.rgb_2Gray(r2G_value=r2G.radio_G.get()))
+
+  def rgb_2Gray(self, r2G_value):
+    if self.checked :
+      _img = copy.copy(self.sub_window.cancel_li[-1])
+      _mode = "c"
+    else:
+      _img = self.sub_window.canvas_img
+      _mode = None
+
+    if r2G_value == 1:
+      g_list = [0.114, 0.587, 0.299]
+    elif r2G_value == 2:
+      g_list = [0.0722, 0.7152, 0.2126]
+    elif r2G_value == 3:
+      g_list = [0, 0, 1]
+    elif r2G_value == 4:
+      g_list = [0, 1, 0]
+    else:
+      g_list = [1, 0, 0]
+    
+    _h, _w, _c = _img.shape
+    gray_img = np.zeros(shape=(_h, _w, 1), dtype=np.uint8)
+    for y in range(_h):
+      for x in range(_w):
+        gray_img[y][x] = (_img[y][x][0]*g_list[0]+_img[y][x][1]*g_list[1]+_img[y][x][2]*g_list[2])
+    self.sub_window.paint_canvas(gray_img, mode=_mode)
+    self.checked = True  
 
   def reset_photo_size(self):
     pass

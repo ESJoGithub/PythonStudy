@@ -8,6 +8,7 @@ class Run_widget(Widget):
     self.width = width
     self.height = height
     self.scale = None
+    self.radio_G = None
     self.count=0
     self.x = self.window.winfo_width() - (width+x)
     self.y = self.window.winfo_y() - self.window.winfo_rooty() + (count*height) + y
@@ -24,6 +25,26 @@ class Run_widget(Widget):
     filter_button.grid(row=2, column=3)
     self.count += 1
     return filter_button
+
+  def get_radio(self, title = "RGB -> Gray"):
+    frame, frame2 = self.get_widget(title)
+    radio_G = tk.IntVar()
+    self.radio_G = radio_G
+    default_Btn = tk.Radiobutton(frame2, text="Default", value=1, variable=radio_G, width=15, height=2)
+    dark_Btn = tk.Radiobutton(frame2, text="Darker", value=2, variable=radio_G, width=15, height=2)
+    r_Btn = tk.Radiobutton(frame2, text="R-Gray", value=3, variable=radio_G, width=10, height=2)
+    g_Btn = tk.Radiobutton(frame2, text="G-Gray", value=4, variable=radio_G, width=10, height=2)
+    b_Btn = tk.Radiobutton(frame2, text="B-Gray", value=5, variable=radio_G, width=10, height=2)
+    default_Btn.grid(row=1, column=2, columnspan=2)
+    dark_Btn.grid(row=1, column=4, columnspan=2)
+    r_Btn.grid(row=2, column=1, columnspan=2)
+    g_Btn.grid(row=2, column=3, columnspan=2)
+    b_Btn.grid(row=2, column=5, columnspan=2)
+    g_button = tk.Button(frame2, text="확인")
+    g_button.grid(row=3, column=3, columnspan=2)
+    self.count += 1
+    return g_button
+
 
   def get_Spin(self, title="캔버스 사이즈 조정"):
     frame, frame2 = self.get_widget(title)
