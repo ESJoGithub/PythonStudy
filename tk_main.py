@@ -1,6 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter.ttk import Sizegrip
 from tk_menu import menubar
 
 window = tk.Tk()
