@@ -34,7 +34,7 @@ class menubar(Methods):
 
     menu_3 = tk.Menu(menubar, tearoff=0)  
     menu_3.add_command(label="RGB -> Gray", command=self.gray_menu)
-    menu_3.add_command(label="RGB -> 흑백")
+    menu_3.add_command(label="RGB -> 흑백", command=self.binary_menu)
     menu_3.add_command(label="RGB -> HSV")
     menu_3.add_separator()
     menu_3.add_command(label="명도, 대비")

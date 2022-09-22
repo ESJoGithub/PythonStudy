@@ -15,6 +15,8 @@ class Methods():
     self.path = "C:\\Users\\user\\desktop"
     self.reload_li = []
     self.checked = False
+    self.confirmed = False
+    self.wg_count = 0
 
   def count_open(self):
     self.count_frames += 1
@@ -48,7 +50,8 @@ class Methods():
     self.sub_window.paint_canvas(img)
 
   def gray_menu(self):
-    r2G = Run_widget(self.window)
+    r2G = Run_widget(self.window, count=self.wg_count)
+    self.wg_count += 1
     g_button = r2G.get_radio()
     g_button.config(command=lambda: self.rgb_2Gray(r2G_value=r2G.radio_G.get()))
 
@@ -60,6 +63,18 @@ class Methods():
       _img = self.sub_window.canvas_img
       _mode = None
 
+    _h, _w, _c = _img.shape
+    gray_img = np.zeros(shape=(_h, _w, 1), dtype=np.uint8)
+
+    if r2G_value == 0:
+      for y in range(_h):
+        for x in range(_w):
+          gray_img[y, x] = ((_img[y, x, 0].astype(np.uint16) + _img[y, x, 1].astype(np.uint16)
+                            + _img[y, x, 2].astype(np.uint16))/3).astype(np.uint8)
+      self.sub_window.paint_canvas(gray_img, mode=_mode)
+      self.checked = True  
+      return
+
     if r2G_value == 1:
       g_list = [0.114, 0.587, 0.299]
     elif r2G_value == 2:
@@ -69,15 +84,40 @@ class Methods():
     elif r2G_value == 4:
       g_list = [0, 1, 0]
     else:
-      g_list = [1, 0, 0]
-    
-    _h, _w, _c = _img.shape
-    gray_img = np.zeros(shape=(_h, _w, 1), dtype=np.uint8)
+      g_list = [1, 0, 0]    
+
     for y in range(_h):
       for x in range(_w):
-        gray_img[y][x] = (_img[y][x][0]*g_list[0]+_img[y][x][1]*g_list[1]+_img[y][x][2]*g_list[2])
+        gray_img[y, x] = (_img[y, x, 0]*g_list[0]+_img[y, x, 1]*g_list[1]+_img[y, x, 2]*g_list[2])
     self.sub_window.paint_canvas(gray_img, mode=_mode)
     self.checked = True  
+
+  def binary_menu(self):
+    _widget = Run_widget(self.window, count=self.wg_count)
+    self.wg_count += 1
+    bi_btn = _widget.get_Scale(title = "흑백 이미지 필터", start=0, end=255, term=1, tick=50)
+    bi_btn.config(command=lambda : self.rgb_2binary(bar=_widget.scale.get()))    
+
+  def rgb_2binary(self, bar=str(122)):
+    if self.confirmed :
+      _img = copy.copy(self.sub_window.cancel_li[-1])
+      _mode = "c"
+    else:
+      _img = self.sub_window.canvas_img
+      _mode = None
+    _bar = int(bar)
+    _img = copy.copy(self.sub_window.canvas_img)
+    _h, _w, _c = _img.shape
+    binary_img = np.zeros(shape=(_h, _w, 1), dtype=np.uint8)
+    for y in range(_h):
+      for x in range(_w):
+        _value = ((_img[y, x, 0].astype(np.uint16) + _img[y, x, 1].astype(np.uint16)  + _img[y, x, 2].astype(np.uint16))/3).astype(np.uint8)
+        if _value > _bar:
+          binary_img[y,x] = 255
+        else:
+          binary_img[y,x] = 0
+    self.sub_window.paint_canvas(binary_img, mode=_mode)
+    self.confirmed = True
 
   def reset_photo_size(self):
     pass
@@ -130,9 +170,10 @@ class Methods():
         symeetic_img[y] = canvas_img[y1]
     self.sub_window.paint_canvas(symeetic_img)
 
-  def filter_menu(self, mode="blur"):
-    _widget = Run_widget(self.window)    
-    filter_button=_widget.get_Scale(mode=mode)
+  def filter_menu(self):
+    _widget = Run_widget(self.window, count=self.wg_count)
+    self.wg_count += 1  
+    filter_button=_widget.get_Scale()
     filter_button.config(command=lambda : self.blur(_pix=_widget.scale.get()))
 
   '''index에 연산을 바로 집어넣지 말자...'''
