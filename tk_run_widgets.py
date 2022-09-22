@@ -1,6 +1,4 @@
 import tkinter as tk
-import tkinter.ttk as ttk
-from turtle import shape
 from tk_widget import Widget
 
 class Run_widget(Widget):
@@ -10,19 +8,21 @@ class Run_widget(Widget):
     self.width = width
     self.height = height
     self.scale = None
+    self.count=0
     self.x = self.window.winfo_width() - (width+x)
     self.y = self.window.winfo_y() - self.window.winfo_rooty() + (count*height) + y
     '''window.winfo_with() 윈도우 안에서 오른쪽 끝, window.winfo_height() 윈도우 안에서 최 하단'''
 
-  def get_Scale(self, mode="blur", title="이미지 필터"):
+  def get_Scale(self, mode="blur", title = "이미지 필터", start=0.0, end=100.0, term=1.0, tick=10.0):
     frame, frame2 = self.get_widget(title)
     scale=tk.Scale(frame2, orient="horizontal",
-                  tickinterval=10, from_=0, to=100, resolution=1, 
+                  tickinterval=tick, from_=start, to=end, resolution=term, 
                   showvalue=True, length=self.width, width=10, sliderlength=15)
     scale.grid(row=1, column=1, columnspan=5)
     self.scale = scale
     filter_button = tk.Button(frame2, text="확인")
     filter_button.grid(row=2, column=3)
+    self.count += 1
     return filter_button
 
   def get_Spin(self, title="캔버스 사이즈 조정"):

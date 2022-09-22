@@ -105,7 +105,6 @@ class Canvas(Widget):
     else:
       src = img
     tk_img = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
-
     photo = Image.fromarray(tk_img)   
     # self.paper : Prevent PhotoImage object being garbage collected!!!
     self.paper = ImageTk.PhotoImage(image=photo, master=self.canvas)

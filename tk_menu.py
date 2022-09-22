@@ -59,7 +59,7 @@ class menubar(Methods):
 
     menu_5 = tk.Menu(menubar, tearoff=0)      
     menu_5.add_command(label="흐리게", command=self.filter_menu)
-    menu_5.add_command(label="선명하게", command=lambda : self.filter_menu(mode="sharpen"))
+    menu_5.add_command(label="선명하게", command=self.sharpen)
     menu_5.add_command(label="모자이크")
     menu_5.add_command(label="색상추출")
     menubar.add_cascade(label="필터", menu=menu_5)

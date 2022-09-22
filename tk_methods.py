@@ -98,19 +98,22 @@ class Methods():
     self.sub_window.paint_canvas(symeetic_img)
 
   def filter_menu(self, mode="blur"):
-    _widget = Run_widget(self.window)
-    filter_button=_widget.get_Scale(mode="blur")
-    if mode=='blur':
-      filter_button.config(command=lambda : self.blur(_pix=_widget.scale.get()))
+    _widget = Run_widget(self.window)    
+    filter_button=_widget.get_Scale(mode=mode)
+    filter_button.config(command=lambda : self.blur(_pix=_widget.scale.get()))
 
   '''index에 연산을 바로 집어넣지 말자...'''
   def blur(self, _pix):
+    _img = self.sub_window.canvas_img
     if _pix == 0 :
-      self.sub_window.paint_canvas(img)
+      self.sub_window.paint_canvas(_img)
       return
-    img = self.sub_window.canvas_img
-    '''
-    제대로 동작하나 연산 속도가 매우 느림 성능 향상 방안 고민 필요
+    else:
+      filtered_img = cv2.blur(_img, (int(_pix), int(_pix)))
+      self.sub_window.paint_canvas(filtered_img)
+
+    '''cv2.blur 대체 코드
+    : 제대로 동작하지만 연산 속도가 매우 느림. 성능 향상 방안 고민 필요(numpy 활용 등)
     _height, _width, _channel = img.shape
     filtered_img = np.zeros(shape=img.shape, dtype=np.uint8)
     _index = _pix//2
@@ -131,8 +134,31 @@ class Methods():
             sum += img[f_y][f_x][:]         
             count += 1          
         filtered_img[y][x][:] = [s//count for s in sum]'''
-    filtered_img = cv2.blur(img, (int(_pix), int(_pix)))
-    self.sub_window.paint_canvas(filtered_img)
+
+  def sharpen(self):
+    _img = self.sub_window.canvas_img
+    _filter = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+    _sharpen = cv2.filter2D(_img, -1, kernel=_filter)
+    self.sub_window.paint_canvas(_sharpen)    
+
+    '''cv2.fiter2D 대체 코드
+    _h, _w, _c = _img.shape
+    _padding = np.zeros(shape=(_h+2, _w+2, _c), dtype='uint8')
+    for y in range(_h):
+      p_y = y+1
+      for x in range(_w):
+        p_x = x+1
+        _padding[p_y, p_x] = _img[y, x]
+    _sharpen = np.zeros(shape=_img.shape, dtype='uint8')
+    for y in range(1, _h+1):
+      y_ = y-1
+      _y = y+1
+      for x in range(1, _w+1):
+        x_ = x-1
+        _x = x+1              
+        _sharpen[y_, x_][0] = _padding[y, x][:]*5 - (_padding[y_, x][:] + _padding[y, x_][:] +_padding[y, _x][:] + _padding[_y, x][:])
+
+    self.sub_window.paint_canvas(_sharpen)'''
 
   def close(self):
     self.window.quit()
