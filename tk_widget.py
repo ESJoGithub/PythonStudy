@@ -2,7 +2,7 @@ import tkinter as tk
 from tk_event import Widget_Event
 
 class Widget(Widget_Event):
-  def __init__(self, window, count=0, width = 1000, height = 510, x = 0, y = 0):
+  def __init__(self, window, width = 1000, height = 510, x = 0, y = 0):
     super().__init__(window)
     self.window = window
     self.widget = None
@@ -11,16 +11,15 @@ class Widget(Widget_Event):
     self.x = 0
     self.y = 0
     self.name = str()
-    self.count = count
 
-  def get_widget(self, title=None):
+  def get_widget(self, title=None, count=1):
     if title is not None:
       self.name = title
 
     main_frame = tk.Frame(self.window, bd=1)
     self.widget = main_frame
     main_frame.place(x=self.x, y = self.y)
-    f_Event = Widget_Event(self.window)
+    f_Event = Widget_Event(self.window, count = count)
     f_Event.set_widget(self.widget)
 
     frame1 = tk.Frame(main_frame, relief="solid", bd=1)

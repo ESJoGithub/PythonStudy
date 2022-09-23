@@ -1,24 +1,23 @@
 import tkinter as tk
+from tk_controller import Controller
 
-class Widget_Event:
-  def __init__(self, window):
+class Widget_Event(Controller):
+  def __init__(self, window, count=1):
     self.window = window
-    self.pWidget = None
     self.widget = None
     self.drag_pos = []
     self.dragging = False
+    self.count = count
   
   def set_widget(self, widget):
     self.widget = widget
   
-  def set_pWidget(self, pWidget):
-    self.pWidget = pWidget
-
   def click(self, event):
     self.dragging = True
     pos_x = event.x_root
     pos_y = event.y_root
     self.drag_pos = [pos_x, pos_y]
+    Controller.show_subwin(str(self.count))
 
   def move(self, event):
     if self.dragging:
