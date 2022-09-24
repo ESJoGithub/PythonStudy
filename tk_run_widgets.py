@@ -28,9 +28,9 @@ class Run_widget(Widget):
     frame, frame2 = self.get_widget(title)
     radio_G = tk.IntVar()
     self.radio_G = radio_G
-    default_Btn = tk.Radiobutton(frame2, text="Default", value=1, variable=radio_G, width=10, height=2)
-    dark_Btn = tk.Radiobutton(frame2, text="Darker", value=2, variable=radio_G, width=11, height=2)
-    rgb_Btn = tk.Radiobutton(frame2, text="RGB-Gray", value=0, variable=radio_G, width=10, height=2)
+    default_Btn = tk.Radiobutton(frame2, text="Default", value=0, variable=radio_G, width=10, height=2)
+    dark_Btn = tk.Radiobutton(frame2, text="Darker", value=1, variable=radio_G, width=11, height=2)
+    rgb_Btn = tk.Radiobutton(frame2, text="RGB-Gray", value=2, variable=radio_G, width=10, height=2)
     r_Btn = tk.Radiobutton(frame2, text="R-Gray", value=3, variable=radio_G, width=10, height=2)
     g_Btn = tk.Radiobutton(frame2, text="G-Gray", value=4, variable=radio_G, width=10, height=2)
     b_Btn = tk.Radiobutton(frame2, text="B-Gray", value=5, variable=radio_G, width=10, height=2)
@@ -43,7 +43,6 @@ class Run_widget(Widget):
     g_button = tk.Button(frame2, text="확인")
     g_button.grid(row=3, column=3, columnspan=2)
     return g_button
-
 
   def get_Spin(self, title="캔버스 사이즈 조정"):
     frame, frame2 = self.get_widget(title)
