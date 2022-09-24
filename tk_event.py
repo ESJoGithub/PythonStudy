@@ -1,3 +1,4 @@
+from cmath import acosh
 import tkinter as tk
 from tk_controller import Controller
 
@@ -40,17 +41,25 @@ class Widget_Event(Controller):
       self.drag_pos=[point_x, point_y]
       self.widget.place(x = self.drag_pos[0], y = self.drag_pos[1])
   
-  def value_Check(self):
-    if self.isdigit():
-      if (int(self) <= 3840 and int(self) >= 0):
+  def value_Check(self, value=str(), _min=0, _max=3840):
+    if value.isdigit():
+      valid = False
+      if int(_min) <= int(value) <= _max:
         valid = True
-    elif self == "":
+    elif value == "":
       valid = True
     return valid
   
   def value_error(self):
-    error_msg = tk.Message(self.window, text="잘못된 범위의 값을 입력하였습니다.", width=100, relief="solid")
-    error_msg.pack()
+    error = tk.Toplevel(self.window)
+    error.title("오류메시지")
+    error.geometry("300x100+450+400")
+    error.resizable(False, False)
+    error_msg = tk.Message(error, text="잘못된 범위의 값을 입력하였습니다.", width=300, aspect=300, anchor="center")
+    error_msg.place(relx=0.17, rely=0.2)
+    btn = tk.Button(error, text="닫기", command=error.destroy)
+    btn.place(relx=0.42, rely=0.6)
+
 
   def release(self, event):
       self.widget.place(x = self.drag_pos[0], y = self.drag_pos[1])

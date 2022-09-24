@@ -40,7 +40,8 @@ class menubar(Methods):
     menu_3.add_separator()
     menu_3.add_command(label="명도", command=self.brightness_control)
     menu_3.add_command(label="대비", command=self.contrast_control)
-    menu_3.add_command(label="색조, 채도")
+    menu_3.add_command(label="색조", command=lambda: self.hsv_control(mode="Hue"))
+    menu_3.add_command(label="채도", command=lambda: self.hsv_control(mode="saturation"))
     menu_3.add_separator()
     menu_3.add_command(label="이미지 크기")
     menu_3.add_command(label="캔버스 크기", command=self.reset_canvas_size)
@@ -60,7 +61,7 @@ class menubar(Methods):
     menubar.add_cascade(label="문자", menu=menu_4)
 
     menu_5 = tk.Menu(menubar, tearoff=0)      
-    menu_5.add_command(label="흐리게", command=self.filter_menu)
+    menu_5.add_command(label="흐리게", command=self.set_blur)
     menu_5.add_command(label="선명하게", command=self.sharpen)
     menu_5.add_command(label="모자이크")
     menu_5.add_command(label="색상추출")

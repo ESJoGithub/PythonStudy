@@ -86,7 +86,7 @@ class Canvas(Widget):
     elif mode == "c":
       self.reload_li.append(c_img)
     self.canvas_img  = copy.copy(img)
-    h, w, c = img.shape
+    h, w = img.shape[:2]
     if not self.changed and w > self.width or h > self.height:
       if h > w and self.width > self.height or h < w and self.width < self.height:
         _width = self.height

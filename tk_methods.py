@@ -1,3 +1,4 @@
+from re import S
 from tkinter import filedialog
 from tk_canvas import Canvas
 from tk_run_widgets import Run_widget
@@ -5,6 +6,8 @@ from tk_controller import Controller
 import cv2
 import numpy as np
 import copy
+
+from tk_widget import Widget
 
 class Methods(Controller):
   def __init__(self, window):
@@ -15,9 +18,19 @@ class Methods(Controller):
     self.bi_chk = False
     self.ls_chk = False
     self.ct_chk = False
+    self.sat_chk = False
+    self.hue_chk = False
     self.wg_count = 0
     self.count_frames = 0
     self.canvas = object
+  
+  def reset(self):
+    self.gray_chk = False
+    self.bi_chk = False
+    self.ls_chk = False
+    self.ct_chk = False
+    self.sat_chk = False
+    self.hue_chk = False
 
   def count_open(self):
     """미니 윈도우 호출 횟수, 파일명 설정 및 미니 윈도우 객체 구분을 위해 활용"""
@@ -25,6 +38,7 @@ class Methods(Controller):
   
   def new_open(self):
     """New Empty Canvas Open"""
+    self.reset()
     self.count_open()                                                                         # frame count + 1
     canvas_widget = Canvas(self.window, self.count_frames)                                    # make widget object for canvas
     self.canvas = canvas_widget
@@ -33,6 +47,7 @@ class Methods(Controller):
 
   def file_open(self):
     """New Image Open"""
+    self.reset()
     self.count_open()                                                                         # frame count + 1
     canvas_widget = Canvas(self.window, self.count_frames)                                    # make widget object for canvas
     self.canvas = canvas_widget
@@ -59,11 +74,14 @@ class Methods(Controller):
     img = self.canvas.reload_li.pop()
     self.canvas.paint_canvas(img)
 
-  '''index에 연산을 바로 집어넣지 말자... 에러 가능성이 있음'''
+  '''index에 연산을 바로 집어넣지 말자... 에러 가능성이 있음
+    오버플로우를 방지할 수 있도록 이미지 type 선정에 신중해야 함.
+  '''
   def gray_menu(self):
     """make Radiobutton widget for RGB2GRAY"""
     r2G = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 1                                                                        # 위젯 호출 횟수. 위젯들 간 위치 설정을 위해 활용(0부터 시작하므로 위젯 객체 생성 후 +1)
+    self.gray_chk = False
     g_button = r2G.get_radio()
     g_button.config(command=lambda: self.rgb_2gray(r2G_value=r2G.radio_G.get()))              # "확인 버튼"과 rgb_2gray 함수 호출 연결 
 
@@ -78,14 +96,15 @@ class Methods(Controller):
       _mode = None
 
     _h, _w = _img.shape[:2]
-    gray_img = np.zeros(shape=(_h, _w, 1), dtype=np.uint8)
+    temp_img = _img.astype(np.float16)
+    gray_img = np.zeros(shape=(_h, _w, 1), dtype=np.float16)
 
     # RGB 색상비율에 따른 흑백처리
     if r2G_value == 0:
       for y in range(_h):
         for x in range(_w):
-          gray_img[y, x] = ((_img[y, x, 0].astype(np.uint16) + _img[y, x, 1].astype(np.uint16)
-                            + _img[y, x, 2].astype(np.uint16))/3).astype(np.uint8)
+          gray_img[y, x] = ((temp_img[y, x, 0] + temp_img[y, x, 1] + temp_img[y, x, 2])/3)
+      gray_img = gray_img.astype(np.uint8)
       self.canvas.paint_canvas(gray_img, mode=_mode)
       self.gray_chk = True  
       return
@@ -104,13 +123,15 @@ class Methods(Controller):
     for y in range(_h):
       for x in range(_w):
         gray_img[y, x] = (_img[y, x, 0]*g_list[0]+_img[y, x, 1]*g_list[1]+_img[y, x, 2]*g_list[2])
-    self.canvas.canvas.paint_canvas(gray_img, mode=_mode)
-    self.checked = True  
+    gray_img = gray_img.astype(np.uint8)
+    self.canvas.paint_canvas(gray_img, mode=_mode)
+    self.gray_chk = True  
 
   def binary_menu(self):
     """make Scale widget for RGB2Binary"""
     _widget = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 1                                                                        # 위젯 호출 횟수. 위젯들 간 위치 설정을 위해 활용(0부터 시작하므로 위젯 객체 생성 후 +1)
+    self.bi_chk = False
     bi_btn = _widget.get_Scale(title = "흑백 이미지 필터", start=0, end=255, term=1, tick=50)  
     bi_btn.config(command=lambda : self.rgb_2binary(bar=_widget.scale.get()))                 # "확인 버튼"과 rgb_2binaray 함수 호출 연결     
 
@@ -124,12 +145,15 @@ class Methods(Controller):
       _img = self.canvas.canvas_img
       _mode = None
     _bar = int(bar)                                                                           # scale 위젯에서 받은 이진처리 기준 값
-    _h, _w = _img.shape[:2]
+    _h, _w, _c = _img.shape
     binary_img = np.zeros(shape=(_h, _w, 1), dtype=np.uint8)
     # RGB 색상을 균등한 비율로 GRAY처리한 후 기준값보다 크면 255, 기준값보다 작으면 0으로 처리
+    # GRAY 이미지라면 기존 값을 기준으로 처리
     for y in range(_h):
       for x in range(_w):
-        _value = ((_img[y, x, 0].astype(np.uint16) + _img[y, x, 1].astype(np.uint16)  + _img[y, x, 2].astype(np.uint16))/3).astype(np.uint8)
+        _value = _img[y, x]
+        if _c == 3:
+          _value = ((_img[y, x, 0].astype(np.uint16) + _img[y, x, 1].astype(np.uint16)  + _img[y, x, 2].astype(np.uint16))/3).astype(np.uint8)
         if _value > _bar:
           binary_img[y,x] = 255
         else:
@@ -137,9 +161,108 @@ class Methods(Controller):
     self.canvas.paint_canvas(binary_img, mode=_mode)
     self.bi_chk = True
 
+  def hsv_control(self, mode="Hue"):
+    if mode == "Hue":
+      _title = "색조 조정"
+      _start = -180
+      _end = 180
+      _tick = 90
+      self.hue_chk
+    else:
+      _title = "채도 조정"
+      _start = -100
+      _end = 100
+      _tick = 50
+      self.sat_chk = False
+    
+    _widget = Run_widget(self.window, count=self.wg_count)
+    self.wg_count += 1  
+
+    spin_btn=_widget.get_Scale(title = _title, start=_start, end=_end, term=1, tick=_tick)
+    spin_btn.config(command=lambda : self.set_HSV(mode=mode, _val= _widget.scale.get()))
+
+  def set_HSV(self, mode="Hue", _val="0"):
+    if self.sat_chk :
+      _img = copy.copy(self.canvas.cancel_li[-1])
+      _mode = "c"
+    else:
+      _img = self.canvas.canvas_img
+      _mode = None
+
+    _h, _w, _c = _img.shape
+    _val = int(_val)
+    if _c == 1:
+      return
+    filtered_img = np.zeros(shape=_img.shape, dtype="uint8")
+    for _y in range(_h):
+      for _x in range(_w):
+        r = _img[_y, _x, 2]/255.0
+        g = _img[_y, _x, 1]/255.0
+        b = _img[_y, _x, 0]/255.0
+
+        listRGB = [r, g, b]
+        v = max(listRGB)
+        c_min = min(listRGB)
+        delta = v - c_min
+  
+        s = 0  
+        if v != 0:
+          s = delta/v        
+        if mode == "saturation":
+          s = (_val+100)/100 * s
+          if s > 1 :
+            s = 1
+          elif s < 0:
+            s = 0
+        
+        h = 0
+        if delta == 0:
+          h = 0
+        elif v == r:
+          h = 60*(g-b)/delta
+        elif v == g:
+          h = 60*((b-r)/delta + 2)
+        elif v ==b:
+          h = 60*((r-g)/delta + 4)
+        
+        if h < 0 :
+          h += 360  
+
+        if mode == "Hue":
+          h = (_val+h) % 360
+
+        c = v*s
+        x = c * (1-np.abs((h/60)%2-1))
+        m = v-c
+
+        listBGR=[0.0, 0.0, 0.0]
+        if 0 <= h < 60:
+          listBGR = [0, x, c]
+        elif 60 <= h <120:
+          listBGR = [0, c, x]
+        elif 120 <= h <180:
+          listBGR = [x, c, 0]    
+        elif 180 <= h <240:
+          listBGR = [c, x, 0]   
+        elif 240 <= h <300:
+          listBGR = [c, 0, x]
+        else:
+          listBGR = [x, 0, c]
+
+        temp = np.round((listBGR+m)*255)
+        temp = temp.clip(0, 255)
+        filtered_img[_y, _x][:] = temp.astype(np.uint8)
+    self.canvas.paint_canvas(filtered_img, mode=_mode)
+    if mode == "Hue":
+      self.hue_chk = True
+    else:
+      self.sat_chk = True           
+
   def rgb_2HSV(self):
     _img = self.canvas.canvas_img
-    _h, _w = _img.shape[:2]
+    _h, _w, _c = _img.shape
+    if _c == 1:
+      return
     hsv_img = np.zeros(shape=_img.shape, dtype="uint8")
     for y in range(_h):
       for x in range(_w):
@@ -174,7 +297,9 @@ class Methods(Controller):
 
   def hsv_2rgb(self):
     hsv_img = self.canvas.canvas_img
-    _h, _w = _img.shape[:2]
+    _h, _w, _c = hsv_img.shape
+    if _c == 1:
+      return
     _img = np.zeros(shape=hsv_img.shape, dtype="uint8")
     for _y in range(_h):
       for _x in range(_w):
@@ -184,26 +309,27 @@ class Methods(Controller):
         c = v*s
         x = c * (1-np.abs((h/60)%2-1))
         m = v-c
-        listBRG=[0, 0, 0]
-        if h <= h < 60:
-          listBRG = [0, x, c]
+        listBGR=[0, 0, 0]
+        if 0 <= h < 60:
+          listBGR = [0, x, c]
         elif 60 <= h <120:
-          listBRG = [0, c, x]
+          listBGR = [0, c, x]
         elif 120 <= h <180:
-          listBRG = [x, c, 0]    
+          listBGR = [x, c, 0]    
         elif 180 <= h <240:
-          listBRG = [c, x, 0]   
+          listBGR = [c, x, 0]   
         elif 240 <= h <300:
-          listBRG = [c, 0, x]
+          listBGR = [c, 0, x]
         else:
-          listBRG = [x, 0, c]
-        _img[_y, _x][:] = np.round((listBRG+m)*255).astype(np.uint8)
+          listBGR = [x, 0, c]
+        _img[_y, _x][:] = np.round((listBGR+m)*255).astype(np.uint8)
     self.canvas.paint_canvas(_img)         
 
   def brightness_control(self):
     """make Scale widget for brightness_control"""
     _widget = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 1                                                                        # 위젯 호출 횟수. 위젯들 간 위치 설정을 위해 활용(0부터 시작하므로 위젯 객체 생성 후 +1)
+    self.ls_chk = False
     br_btn = _widget.get_Scale(title = "명암조절", start=-255, end=255, term=1, tick=255)  
     br_btn.config(command=lambda : self.lightNShade(bar=_widget.scale.get()))                    # "확인 버튼"과 contrast 함수 호출 연결     
 
@@ -227,6 +353,7 @@ class Methods(Controller):
     """make Scale widget for brightness_control"""
     _widget = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 1                                                                        # 위젯 호출 횟수. 위젯들 간 위치 설정을 위해 활용(0부터 시작하므로 위젯 객체 생성 후 +1)
+    self.ct_chk = False
     br_btn = _widget.get_Scale(title = "명암조절", start=0, end=10, term=0.1, tick=1)  
     br_btn.config(command=lambda : self.contrast(bar=_widget.scale.get())) 
   
@@ -299,7 +426,7 @@ class Methods(Controller):
         symeetic_img[y] = _img[y1]
     self.canvas.paint_canvas(symeetic_img)
 
-  def filter_menu(self):
+  def set_blur(self):
     _widget = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 1  
     filter_button=_widget.get_Scale()
@@ -339,14 +466,10 @@ class Methods(Controller):
 
   def sharpen(self):
     _img = self.canvas.canvas_img
-    _filter = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-    _sharpen = cv2.filter2D(_img, -1, kernel=_filter)
-    self.canvas.paint_canvas(_sharpen)    
 
-    '''cv2.fiter2D 대체 코드
-    : 고주파 처리 과정에서 잡음이 많이 발생
     _h, _w = _img.shape[:2]
-    _sharpen = np.zeros(shape=_img.shape, dtype='uint8')
+    temp_img = _img.astype(np.int32)                        # 합산 값의 범위가 -255*4 ~ 255*5로 추정되므로 오버플로우를 방지해야 함
+    _sharpen = np.zeros(shape=_img.shape, dtype='int32')    # 합산 값의 범위가 -255*4 ~ 255*5로 추정되므로 오버플로우를 방지해야 함
     for y in range(_h):
       y_ = y-1
       _y = y+1
@@ -357,9 +480,10 @@ class Methods(Controller):
         _x = x+1
         if x_ < 0 or _x >= _w:
           continue       
-        _sharpen[y, x][:] = _img[y, x][:]*5 - _img[_y, x][:] - _img[y, x_][:] -_img[y, _x][:] - _img[_y, x][:]
-
-    self.canvas.paint_canvas(_sharpen)'''
+        _sharpen[y, x][:] = temp_img[y, x][:]*5 - temp_img[_y, x][:] - temp_img[y, x_][:] - temp_img[y, _x][:] - temp_img[_y, x][:]
+    _sharpen = _sharpen.clip(0, 255)
+    _sharpen = _sharpen.astype(np.uint8)
+    self.canvas.paint_canvas(_sharpen)
 
   def close(self):
     self.window.quit()
