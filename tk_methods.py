@@ -402,10 +402,10 @@ class Methods(Controller):
 
   def rotate_img(self, _img):
     """rotate current img 90 degrees"""
-    _h, _w = _img.shape[:2]
-    rotated_img = np.zeros(shape=(_img.shape), dtype=np.uint8)
+    _h, _w, _c = _img.shape
+    rotated_img = np.zeros(shape=(_w, _h, _c), dtype=np.uint8)
     for y in range(_h):
-      y1 = (_h-1)-y                                # reversed y-index -> x-index for rotated_img 인덱스 값을 구해야 하므로 h - 1
+      y1 = (_h-1)-y                                # reversed y-index -> x-index for rotated_img 인덱스 값을 구해야 하므로 h-1
       for x in range(_w):
         rotated_img[x][y] = _img[y1][x]            # x-index -> y-index for rotated_img
     return rotated_img
