@@ -1,10 +1,8 @@
-import tkinter as tk
-from tkinter import Frame, filedialog
+from tkinter import filedialog
 from tk_canvas import Canvas
 from tk_run_widgets import Run_widget
 from tk_controller import Controller
 import cv2
-from PIL import Image, ImageTk
 import numpy as np
 import copy
 
@@ -17,39 +15,45 @@ class Methods(Controller):
     self.confirmed = False
     self.wg_count = 0
     self.count_frames = 0
+    self.canvas = object
 
   def count_open(self):
+    """미니 윈도우 호출 횟수, 파일명 설정 및 미니 윈도우 객체 구분을 위해 활용"""
     self.count_frames += 1
   
   def new_open(self):
-    self.count_open()
-    sub_window = Canvas(self.window, self.count_frames)
-    _frame = sub_window.get_canvas()
-    _frame_show = copy.copy(_frame)
-    Controller.get_subwind(None, subwin=_frame_show, count = self.count_frames)
+    """New Empty Canvas Open"""
+    self.count_open()                                                                         # frame count + 1
+    canvas_widget = Canvas(self.window, self.count_frames)                                    # make widget object for canvas
+    self.canvas = canvas_widget
+    canvas_widget.get_canvas()                                                                # make canvas
+    Controller.get_subwind(None, subwin=copy.copy(canvas_widget), count = self.count_frames)  # add to sub_windows dict
 
   def file_open(self):
-    self.count_open()
-    sub_window = Canvas(self.window, self.count_frames)
+    """New Image Open"""
+    self.count_open()                                                                         # frame count + 1
+    canvas_widget = Canvas(self.window, self.count_frames)                                    # make widget object for canvas
+    self.canvas = canvas_widget
+    # Imagefile open & get Imgagefile name
     _filename = filedialog.askopenfilename(initialdir=self.path, title="열기", 
-                                          filetypes=(("모든 파일", "*.*"),
-                                                    ("모든 그림 파일", "*.jpg;*.jpeg;*.btm;*.png;*.tif;*.gif"), 
+                                          filetypes=(("모든 그림 파일", "*.jpg;*.jpeg;*.btm;*.png;*.tif;*.gif"), 
                                                     ("JPG", "*.jpg;*.jpeg"),
                                                     ("비트맵 파일", "*.btm"),
                                                     ("PNG", "*.png"),
                                                     ("TIF", "*.tif"),
                                                     ("GIF", "*.gif")))
-    _frame = sub_window.get_canvas(filename=_filename)
-    _frame_show = copy.copy(_frame)
-    Controller.get_subwin(None, subwin=_frame_show, count = self.count_frames)
+    canvas_widget.get_canvas(filename=_filename)                                              # make canvas & create Image on canvas
+    Controller.get_subwin(None, subwin=copy.copy(canvas_widget), count = self.count_frames)   # add to sub_windows dict
 
   def cancel(self):
-    img = Controller.sub_window.cancel_li.pop()
-    Controller.sub_window.paint_canvas(img, mode = "c")
+    """작업 취소 내역"""
+    img = self.canvas.cancel_li.pop()
+    self.canvas.paint_canvas(img, mode = "c")
 
   def reload(self):
-    img = Controller.sub_window.reload_li.pop()
-    Controller.sub_window.paint_canvas(img)
+    """작업 취소 시 작업 취소 전 실행 내역"""
+    img = self.canvas.reload_li.pop()
+    self.canvas.paint_canvas(img)
 
   def gray_menu(self):
     r2G = Run_widget(self.window, count=self.wg_count)
@@ -59,10 +63,10 @@ class Methods(Controller):
 
   def rgb_2Gray(self, r2G_value):
     if self.checked :
-      _img = copy.copy(Controller.sub_window.cancel_li[-1])
+      _img = copy.copy(self.canvas.cancel_li[-1])
       _mode = "c"
     else:
-      _img = Controller.sub_window.canvas_img
+      _img = self.canvas.canvas_img
       _mode = None
 
     _h, _w, _c = _img.shape
@@ -73,7 +77,7 @@ class Methods(Controller):
         for x in range(_w):
           gray_img[y, x] = ((_img[y, x, 0].astype(np.uint16) + _img[y, x, 1].astype(np.uint16)
                             + _img[y, x, 2].astype(np.uint16))/3).astype(np.uint8)
-      Controller.sub_window.paint_canvas(gray_img, mode=_mode)
+      self.canvas.paint_canvas(gray_img, mode=_mode)
       self.checked = True  
       return
 
@@ -91,7 +95,7 @@ class Methods(Controller):
     for y in range(_h):
       for x in range(_w):
         gray_img[y, x] = (_img[y, x, 0]*g_list[0]+_img[y, x, 1]*g_list[1]+_img[y, x, 2]*g_list[2])
-    Controller.sub_window.paint_canvas(gray_img, mode=_mode)
+    self.canvas.canvas.paint_canvas(gray_img, mode=_mode)
     self.checked = True  
 
   def binary_menu(self):
@@ -102,13 +106,13 @@ class Methods(Controller):
 
   def rgb_2binary(self, bar=str(122)):
     if self.confirmed :
-      _img = copy.copy(Controller.sub_window.cancel_li[-1])
+      _img = copy.copy(self.canvas.cancel_li[-1])
       _mode = "c"
     else:
-      _img = Controller.sub_window.canvas_img
+      _img = self.canvas.canvas_img
       _mode = None
     _bar = int(bar)
-    _img = copy.copy(Controller.sub_window.canvas_img)
+    _img = copy.copy(self.canvas.canvas_img)
     _h, _w, _c = _img.shape
     binary_img = np.zeros(shape=(_h, _w, 1), dtype=np.uint8)
     for y in range(_h):
@@ -118,7 +122,7 @@ class Methods(Controller):
           binary_img[y,x] = 255
         else:
           binary_img[y,x] = 0
-    Controller.sub_window.paint_canvas(binary_img, mode=_mode)
+    self.canvas.paint_canvas(binary_img, mode=_mode)
     self.confirmed = True
 
   def reset_photo_size(self):
@@ -130,23 +134,23 @@ class Methods(Controller):
     size_widget.y = self.window.winfo_y() - self.window.winfo_rooty() + 60
     size_widget = size_widget.make_Widget(mode="canvas_resize", title="캔버스 크기 조정", _resizable=False)
     def confirm():
-      Controller.sub_window.changed = True
-      Controller.sub_window.width = int()
-      Controller.sub_window.height = int()
-      Controller.sub_window.canvas.create_image(self.width//2, self.height//2, image=self.paper)
+      self.canvas.changed = True
+      self.canvas.width = int()
+      self.canvas.height = int()
+      self.canvas.canvas.create_image(self.width//2, self.height//2, image=self.paper)
 
   def rotation(self, mode=1):
-    canvas_img = Controller.sub_window.canvas_img
+    canvas_img = self.canvas.canvas_img
     img_90 = self.rotate_img(canvas_img)
     if mode == 1:    
-      Controller.sub_window.paint_canvas(img_90)
+      self.canvas.paint_canvas(img_90)
     elif mode == 2:
       img_180 = self.rotate_img(img_90)
-      Controller.sub_window.paint_canvas(img_180)
+      self.canvas.paint_canvas(img_180)
     elif mode == 3:
       img_180 = self.rotate_img(img_90)
       img_270 = self.rotate_img(img_180)
-      Controller.sub_window.paint_canvas(img_270)
+      self.canvas.canvas.paint_canvas(img_270)
 
   def rotate_img(self, _img):
     _height, _width, _channel = _img.shape
@@ -158,7 +162,7 @@ class Methods(Controller):
     return rotated_img
   
   def symmetric(self, mode = "y"):
-    canvas_img = Controller.sub_window.canvas_img
+    canvas_img = self.canvas.canvas_img
     _height, _width, _channel = canvas_img.shape
     symeetic_img = np.zeros(shape=(_height, _width, _channel), dtype=np.uint8)
     if mode == "y":
@@ -170,7 +174,7 @@ class Methods(Controller):
       for y in range(_height):
         y1 = (_height-1)-y
         symeetic_img[y] = canvas_img[y1]
-    Controller.sub_window.paint_canvas(symeetic_img)
+    self.canvas.paint_canvas(symeetic_img)
 
   def filter_menu(self):
     _widget = Run_widget(self.window, count=self.wg_count)
@@ -180,13 +184,13 @@ class Methods(Controller):
 
   '''index에 연산을 바로 집어넣지 말자...'''
   def blur(self, _pix):
-    _img = Controller.sub_window.canvas_img
+    _img = self.canvas.canvas_img
     if _pix == 0 :
-      Controller.sub_window.paint_canvas(_img)
+      self.canvas.paint_canvas(_img)
       return
     else:
       filtered_img = cv2.blur(_img, (int(_pix), int(_pix)))
-      Controller.sub_window.paint_canvas(filtered_img)
+      self.canvas.paint_canvas(filtered_img)
 
     '''cv2.blur 대체 코드
     : 제대로 동작하지만 연산 속도가 매우 느림. 성능 향상 방안 고민 필요(numpy 활용 등)
@@ -212,10 +216,10 @@ class Methods(Controller):
         filtered_img[y][x][:] = [s//count for s in sum]'''
 
   def sharpen(self):
-    _img = Controller.sub_window.canvas_img
+    _img = self.canvas.canvas_img
     _filter = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
     _sharpen = cv2.filter2D(_img, -1, kernel=_filter)
-    Controller.sub_window.paint_canvas(_sharpen)    
+    self.canvas.paint_canvas(_sharpen)    
 
     '''cv2.fiter2D 대체 코드
     _h, _w, _c = _img.shape
@@ -234,7 +238,7 @@ class Methods(Controller):
         _x = x+1              
         _sharpen[y_, x_][0] = _padding[y, x][:]*5 - (_padding[y_, x][:] + _padding[y, x_][:] +_padding[y, _x][:] + _padding[_y, x][:])
 
-    Controller.sub_window.paint_canvas(_sharpen)'''
+    self.canvas.paint_canvas(_sharpen)'''
 
   def close(self):
     self.window.quit()

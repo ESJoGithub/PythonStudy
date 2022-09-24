@@ -5,7 +5,7 @@ class Widget(Widget_Event):
   def __init__(self, window, width = 1000, height = 510, x = 0, y = 0):
     super().__init__(window)
     self.window = window
-    self.widget = None
+    self.widget = object
     self.width = width
     self.height = height
     self.x = 0

@@ -11,7 +11,7 @@ class Canvas(Widget):
     super().__init__(window)
     self.window = window
     self.canvas = None
-    self.widget = None
+    self.frame = object
     self.width = width
     self.height = height
     self.photo_w = self.width
@@ -23,7 +23,7 @@ class Canvas(Widget):
     self.origin = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
     self.cv2_img = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
     self.canvas_img = np.full(shape=(self.height, self.width, 3), fill_value=255, dtype=np.uint8)
-    self.paper=None
+    self.paper = None
     self.changed = False
     self.cancel_li = []
     self.reload_li = []
@@ -37,6 +37,7 @@ class Canvas(Widget):
   def get_canvas(self, filename="제목없음"):
     self.get_filename(filename)
     frame, frame2 = self.get_widget(count=self.count)
+    self.frame = frame
     canvas = self.make_canvas(frame2, filename=filename)
     self.canvas = canvas
     label2 = tk.Label(frame2, relief="raised", height=1)
@@ -65,7 +66,6 @@ class Canvas(Widget):
                   y = canvas.winfo_rooty() + canvas.winfo_reqheight() + 32)
 
     sizegrip.bind("<ButtonRelease-1>", drag)
-    return frame
 
   def make_canvas(self, _parent, filename="제목없음"):
     self.canvas = tk.Canvas(_parent)

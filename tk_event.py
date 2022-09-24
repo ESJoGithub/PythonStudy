@@ -4,7 +4,7 @@ from tk_controller import Controller
 class Widget_Event(Controller):
   def __init__(self, window, count=1):
     self.window = window
-    self.widget = None
+    self.widget = object
     self.drag_pos = []
     self.dragging = False
     self.count = count

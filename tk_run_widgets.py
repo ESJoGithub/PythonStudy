@@ -9,8 +9,8 @@ class Run_widget(Widget):
     self.height = height
     self.scale = None
     self.radio_G = None
-    self.x = self.window.winfo_width() - (width+x)
-    self.y = self.window.winfo_y() - self.window.winfo_rooty() + (count*height) + y
+    self.x = self.window.winfo_width() - ((count//6+1)*(width+x))
+    self.y = self.window.winfo_y() - self.window.winfo_rooty() + (count%6*height) + y
     '''window.winfo_with() 윈도우 안에서 오른쪽 끝, window.winfo_height() 윈도우 안에서 최 하단'''
 
   def get_Scale(self, title = "이미지 필터", start=0.0, end=100.0, term=1.0, tick=10.0):
