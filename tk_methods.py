@@ -1,4 +1,4 @@
-from re import S
+import tkinter as tk
 from tkinter import filedialog
 from tk_canvas import Canvas
 from tk_run_widgets import Run_widget
@@ -7,13 +7,11 @@ import cv2
 import numpy as np
 import copy
 
-from tk_widget import Widget
-
 class Methods(Controller):
+
   def __init__(self, window):
     self.window = window
     self.path = "C:\\Users\\user\\desktop"
-    self.reload_li = []
     self.gray_chk = False
     self.bi_chk = False
     self.ls_chk = False
@@ -22,8 +20,7 @@ class Methods(Controller):
     self.hue_chk = False
     self.wg_count = 0
     self.count_frames = 0
-    self.canvas = object
-  
+
   def reset(self):
     self.gray_chk = False
     self.bi_chk = False
@@ -41,16 +38,17 @@ class Methods(Controller):
     self.reset()
     self.count_open()                                                                         # frame count + 1
     canvas_widget = Canvas(self.window, self.count_frames)                                    # make widget object for canvas
-    self.canvas = canvas_widget
+    Controller.current_can = canvas_widget
+    
     canvas_widget.get_canvas()                                                                # make canvas
-    Controller.get_subwind(None, subwin=copy.copy(canvas_widget), count = self.count_frames)  # add to sub_windows dict
+    Controller.get_subwind(subwin=copy.copy(canvas_widget), count = self.count_frames)        # add to sub_windows dict
 
   def file_open(self):
     """New Image Open"""
     self.reset()
     self.count_open()                                                                         # frame count + 1
     canvas_widget = Canvas(self.window, self.count_frames)                                    # make widget object for canvas
-    self.canvas = canvas_widget
+    Controller.current_can = canvas_widget
 
     # Imagefile open & get Imgagefile name
     _filename = filedialog.askopenfilename(initialdir=self.path, title="열기", 
@@ -62,17 +60,65 @@ class Methods(Controller):
                                                     ("GIF", "*.gif")))
 
     canvas_widget.get_canvas(filename=_filename)                                              # make canvas & create Image on canvas
-    Controller.get_subwin(None, subwin=copy.copy(canvas_widget), count = self.count_frames)   # add to sub_windows dict
+    Controller.get_subwin(subwin=copy.copy(canvas_widget), count = self.count_frames)         # add to sub_windows dict
+
+  def file_save(self, mode="save"):
+    if Controller.current_can.paper is None:
+      error = tk.Toplevel(self.window)
+      error.title("오류메시지")
+      error.geometry("300x100+450+400")
+      error.resizable(False, False)
+      error_msg = tk.Message(error, text="저장할 내용이 없습니다.", width=300, aspect=300, anchor="center")
+      error_msg.place(relx=0.25, rely=0.2)
+      btn = tk.Button(error, text="닫기", command=error.destroy)
+      btn.place(relx=0.42, rely=0.6)
+    
+    def confirm():
+      save_alert.destroy()
+      _img = Controller.current_can.canvas_img
+      _filename = Controller.current_can.filename.replace(".", str(Controller.current_can.count) + ".")
+      savefile=self.path+"\\"+_filename
+      cv2.imwrite(filename=savefile, img=_img)
+
+    def confirmas():
+      _img = Controller.current_can.canvas_img
+      _filename = Controller.current_can.filename.replace(".", str(Controller.current_can.count) + ".")
+      savefile = filedialog.asksaveasfilename(initialdir=self.path, title="다른 이름으로 저장",  initialfile=_filename, 
+                                              filetypes=(("모든 그림 파일", "*.jpg;*.jpeg;*.btm;*.png;*.tif;*.gif"), 
+                                                        ("JPG", "*.jpg;*.jpeg"),
+                                                        ("비트맵 파일", "*.btm"),
+                                                        ("PNG", "*.png"),
+                                                        ("TIF", "*.tif"),
+                                                        ("GIF", "*.gif")))
+      cv2.imwrite(filename=savefile, img=_img)
+
+    if mode == "save":
+      _title = "저장"
+      _confirm = confirm
+    else:
+      _title = "다른 이름으로 저장"
+      _confirm =confirmas
+  
+    save_alert = tk.Toplevel(self.window)
+    save_alert.title(_title)
+    save_alert.geometry("300x100+450+400")
+    save_alert.resizable(False, False)
+    save_msg = tk.Message(save_alert, text="변경 사항을 저장하시겠습니까?", width=300, aspect=300, anchor="center")
+    save_msg.place(relx=0.19, rely=0.2)
+    btn_confirm = tk.Button(save_alert, text="예", padx=22, command=_confirm)
+    btn_confirm.place(relx=0.2, rely=0.6)
+    btn_cancel = tk.Button(save_alert, text="아니오", padx=10, command=save_alert.destroy)
+    btn_cancel.place(relx=0.57, rely=0.6)
 
   def cancel(self):
     """작업 취소 내역"""
-    img = self.canvas.cancel_li.pop()
-    self.canvas.paint_canvas(img, mode = "c")
+    img = Controller.current_can.cancel_li.pop()
+    Controller.current_can.paint_canvas(img, mode = "c")
 
   def reload(self):
     """작업 취소 시 작업 취소 전 실행 내역"""
-    img = self.canvas.reload_li.pop()
-    self.canvas.paint_canvas(img)
+    img = Controller.current_can.reload_li.pop()
+    Controller.current_can.paint_canvas(img)
 
   '''index에 연산을 바로 집어넣지 말자... 에러 가능성이 있음
     오버플로우를 방지할 수 있도록 이미지 type 선정에 신중해야 함.
@@ -89,10 +135,10 @@ class Methods(Controller):
     # 기존에 GRAY처리 이력이 있다면 직전 이미지를 GRAY처리에 사용하고 실행취소 목록에 넣지 않음, 
     # 기존에 GRAY처리 이력이 없다면 현재 이미지를 GRAY처리에 사용
     if self.gray_chk :
-      _img = copy.copy(self.canvas.cancel_li[-1])
+      _img = copy.copy(Controller.current_can.cancel_li[-1])
       _mode = "c"
     else:
-      _img = self.canvas.canvas_img
+      _img = Controller.current_can.canvas_img
       _mode = None
 
     _h, _w = _img.shape[:2]
@@ -105,7 +151,7 @@ class Methods(Controller):
         for x in range(_w):
           gray_img[y, x] = ((temp_img[y, x, 0] + temp_img[y, x, 1] + temp_img[y, x, 2])/3)
       gray_img = gray_img.astype(np.uint8)
-      self.canvas.paint_canvas(gray_img, mode=_mode)
+      Controller.current_can.paint_canvas(gray_img, mode=_mode)
       self.gray_chk = True  
       return
 
@@ -124,7 +170,7 @@ class Methods(Controller):
       for x in range(_w):
         gray_img[y, x] = (_img[y, x, 0]*g_list[0]+_img[y, x, 1]*g_list[1]+_img[y, x, 2]*g_list[2])
     gray_img = gray_img.astype(np.uint8)
-    self.canvas.paint_canvas(gray_img, mode=_mode)
+    Controller.current_can.paint_canvas(gray_img, mode=_mode)
     self.gray_chk = True  
 
   def binary_menu(self):
@@ -139,10 +185,10 @@ class Methods(Controller):
     # 기존에 이진처리 이력이 있다면 직전 이미지를 Binary처리에 사용하고 실행취소 목록에 넣지 않음, 
     # 기존에 이진처리 이력이 없다면 현재 이미지를 Binary처리에 사용
     if self.bi_chk :
-      _img = copy.copy(self.canvas.cancel_li[-1])
+      _img = copy.copy(Controller.current_can.cancel_li[-1])
       _mode = "c"
     else:
-      _img = self.canvas.canvas_img
+      _img = Controller.current_can.canvas_img
       _mode = None
     _bar = int(bar)                                                                           # scale 위젯에서 받은 이진처리 기준 값
     _h, _w, _c = _img.shape
@@ -158,7 +204,7 @@ class Methods(Controller):
           binary_img[y,x] = 255
         else:
           binary_img[y,x] = 0
-    self.canvas.paint_canvas(binary_img, mode=_mode)
+    Controller.current_can.paint_canvas(binary_img, mode=_mode)
     self.bi_chk = True
 
   def hsv_control(self, mode="Hue"):
@@ -183,10 +229,10 @@ class Methods(Controller):
 
   def set_HSV(self, mode="Hue", _val="0"):
     if self.sat_chk :
-      _img = copy.copy(self.canvas.cancel_li[-1])
+      _img = copy.copy(Controller.current_can.cancel_li[-1])
       _mode = "c"
     else:
-      _img = self.canvas.canvas_img
+      _img = Controller.current_can.canvas_img
       _mode = None
 
     _h, _w, _c = _img.shape
@@ -252,14 +298,14 @@ class Methods(Controller):
         temp = np.round((listBGR+m)*255)
         temp = temp.clip(0, 255)
         filtered_img[_y, _x][:] = temp.astype(np.uint8)
-    self.canvas.paint_canvas(filtered_img, mode=_mode)
+    Controller.current_can.paint_canvas(filtered_img, mode=_mode)
     if mode == "Hue":
       self.hue_chk = True
     else:
       self.sat_chk = True           
 
   def rgb_2HSV(self):
-    _img = self.canvas.canvas_img
+    _img = Controller.current_can.canvas_img
     _h, _w, _c = _img.shape
     if _c == 1:
       return
@@ -293,10 +339,10 @@ class Methods(Controller):
           h += 360  
 
         hsv_img[y][x][:]=[h/2, s*255, c_max*255]
-    self.canvas.paint_canvas(hsv_img)
+    Controller.current_can.paint_canvas(hsv_img)
 
   def hsv_2rgb(self):
-    hsv_img = self.canvas.canvas_img
+    hsv_img = Controller.current_can.canvas_img
     _h, _w, _c = hsv_img.shape
     if _c == 1:
       return
@@ -323,7 +369,7 @@ class Methods(Controller):
         else:
           listBGR = [x, 0, c]
         _img[_y, _x][:] = np.round((listBGR+m)*255).astype(np.uint8)
-    self.canvas.paint_canvas(_img)         
+    Controller.current_can.paint_canvas(_img)         
 
   def brightness_control(self):
     """make Scale widget for brightness_control"""
@@ -335,10 +381,10 @@ class Methods(Controller):
 
   def lightNShade(self, bar=str(0)):
     if self.ls_chk :
-      _img = copy.copy(self.canvas.cancel_li[-1])
+      _img = copy.copy(Controller.current_can.cancel_li[-1])
       _mode = "c"
     else:
-      _img = self.canvas.canvas_img
+      _img = Controller.current_can.canvas_img
       _mode = None
     _bar = int(bar)                                                                           # scale 위젯에서 받은 명암처리 기준 값
     _filter = np.full(shape=_img.shape, fill_value=_bar, dtype=np.int16)
@@ -346,7 +392,7 @@ class Methods(Controller):
     filtered_img = _img + _filter
     filtered_img = filtered_img.clip(0, 255)
     filtered_img = filtered_img.astype(np.uint8)
-    self.canvas.paint_canvas(filtered_img, mode=_mode)
+    Controller.current_can.paint_canvas(filtered_img, mode=_mode)
     self.ls_chk = True
 
   def contrast_control(self):
@@ -359,10 +405,10 @@ class Methods(Controller):
   
   def contrast(self, bar=str(1)):
     if self.ct_chk :
-      _img = copy.copy(self.canvas.cancel_li[-1])
+      _img = copy.copy(Controller.current_can.cancel_li[-1])
       _mode = "c"
     else:
-      _img = self.canvas.canvas_img
+      _img = Controller.current_can.canvas_img
       _mode = None
     _bar = int(bar)
     temp_img = _img.astype(np.float32)                                                                          # scale 위젯에서 받은 기준 값
@@ -370,7 +416,7 @@ class Methods(Controller):
     filtered_img = temp_img + (temp_img-128) * _bar
     filtered_img = filtered_img.clip(0, 255)
     filtered_img = filtered_img.astype(np.uint8)
-    self.canvas.paint_canvas(filtered_img, mode=_mode)    
+    Controller.current_can.paint_canvas(filtered_img, mode=_mode)    
     self.ct_chk = True    
 
   def reset_photo_size(self):
@@ -382,23 +428,23 @@ class Methods(Controller):
     size_widget.y = self.window.winfo_y() - self.window.winfo_rooty() + 60
     size_widget = size_widget.make_Widget(mode="canvas_resize", title="캔버스 크기 조정", _resizable=False)
     def confirm():
-      self.canvas.changed = True
-      self.canvas.width = int()
-      self.canvas.height = int()
-      self.canvas.canvas.create_image(self.width//2, self.height//2, image=self.paper)
+      Controller.current_can.changed = True
+      Controller.current_can.width = int()
+      Controller.current_can.height = int()
+      Controller.current_can.canvas.create_image(self.width//2, self.height//2, image=self.paper)
 
   def rotation(self, mode=1):
-    canvas_img = self.canvas.canvas_img
+    canvas_img = Controller.current_can.canvas_img
     img_90 = self.rotate_img(canvas_img)
     if mode == 1:                                  # 90 degrees Clockwise
-      self.canvas.paint_canvas(img_90)
+      Controller.current_can.paint_canvas(img_90)
     elif mode == 2:                                # 180 degrees
       img_180 = self.rotate_img(img_90)
-      self.canvas.paint_canvas(img_180)
+      Controller.current_can.paint_canvas(img_180)
     elif mode == 3:                                # 90 degrees Counter Colckwise
       img_180 = self.rotate_img(img_90)
       img_270 = self.rotate_img(img_180)
-      self.canvas.paint_canvas(img_270)
+      Controller.current_can.paint_canvas(img_270)
 
   def rotate_img(self, _img):
     """rotate current img 90 degrees"""
@@ -411,7 +457,7 @@ class Methods(Controller):
     return rotated_img
   
   def symmetric(self, mode = "y"):
-    _img = self.canvas.canvas_img
+    _img = Controller.current_can.canvas_img
     _h, _w = _img.shape[:2]
     symeetic_img = np.zeros(shape=(_img.shape), dtype=np.uint8)
 
@@ -424,7 +470,7 @@ class Methods(Controller):
       for y in range(_h):
         y1 = (_h-1)-y
         symeetic_img[y] = _img[y1]
-    self.canvas.paint_canvas(symeetic_img)
+    Controller.current_can.paint_canvas(symeetic_img)
 
   def set_blur(self):
     _widget = Run_widget(self.window, count=self.wg_count)
@@ -433,13 +479,13 @@ class Methods(Controller):
     filter_button.config(command=lambda : self.blur(_pix=_widget.scale.get()))
 
   def blur(self, _pix):
-    _img = self.canvas.canvas_img
+    _img = Controller.current_can.canvas_img
     if _pix == 0 :
-      self.canvas.paint_canvas(_img)
+      Controller.current_can.paint_canvas(_img)
       return
     else:
       filtered_img = cv2.blur(_img, (int(_pix), int(_pix)))
-      self.canvas.paint_canvas(filtered_img)
+      Controller.current_can.paint_canvas(filtered_img)
 
     '''cv2.blur 대체 코드
     : 제대로 동작하지만 연산 속도가 매우 느림. 성능 향상 방안 고민 필요(numpy 활용 등)
@@ -465,7 +511,7 @@ class Methods(Controller):
         filtered_img[y, x][:] = [s//count for s in sum]'''
 
   def sharpen(self):
-    _img = self.canvas.canvas_img
+    _img = Controller.current_can.canvas_img
 
     _h, _w = _img.shape[:2]
     temp_img = _img.astype(np.int32)                        # 합산 값의 범위가 -255*4 ~ 255*5로 추정되므로 오버플로우를 방지해야 함
@@ -483,7 +529,7 @@ class Methods(Controller):
         _sharpen[y, x][:] = temp_img[y, x][:]*5 - temp_img[_y, x][:] - temp_img[y, x_][:] - temp_img[y, _x][:] - temp_img[_y, x][:]
     _sharpen = _sharpen.clip(0, 255)
     _sharpen = _sharpen.astype(np.uint8)
-    self.canvas.paint_canvas(_sharpen)
+    Controller.current_can.paint_canvas(_sharpen)
 
   def close(self):
     self.window.quit()

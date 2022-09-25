@@ -15,8 +15,8 @@ class menubar(Methods):
     menu_1.add_command(label="새로만들기", command = self.new_open)
     menu_1.add_command(label="열기", command=self.file_open)
     menu_1.add_separator()
-    menu_1.add_command(label="다른 이름으로 저장")
-    menu_1.add_command(label="저장")
+    menu_1.add_command(label="저장", command=self.file_save)
+    menu_1.add_command(label="다른 이름으로 저장", command = lambda: self.file_save(mode="saveas"))
     menu_1.add_separator()
     menu_1.add_command(label="닫기", command = self.close)
     menubar.add_cascade(label="파일", menu=menu_1)
@@ -63,7 +63,6 @@ class menubar(Methods):
     menu_5 = tk.Menu(menubar, tearoff=0)      
     menu_5.add_command(label="흐리게", command=self.set_blur)
     menu_5.add_command(label="선명하게", command=self.sharpen)
-    menu_5.add_command(label="모자이크")
     menu_5.add_command(label="색상추출")
     menubar.add_cascade(label="필터", menu=menu_5)
 

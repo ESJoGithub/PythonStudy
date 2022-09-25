@@ -1,4 +1,3 @@
-from cmath import acosh
 import tkinter as tk
 from tk_controller import Controller
 

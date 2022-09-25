@@ -1,9 +1,8 @@
 import tkinter as tk
 from tk_event import Widget_Event
 
-class Widget(Widget_Event):
+class Widget():
   def __init__(self, window, width = 1000, height = 510, x = 0, y = 0):
-    super().__init__(window)
     self.window = window
     self.widget = object
     self.width = width

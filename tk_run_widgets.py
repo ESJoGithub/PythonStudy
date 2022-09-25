@@ -1,4 +1,3 @@
-from distutils.log import error
 import tkinter as tk
 from tk_widget import Widget
 
