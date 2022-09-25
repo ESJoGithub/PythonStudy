@@ -10,8 +10,9 @@ class Canvas(Widget):
   def __init__(self, window, count=1, width = 700, height = 510):
     super().__init__(window)
     self.window = window
-    self.canvas = None
+    self.canvas = object
     self.frame = object
+    self.sizegrip = object
     self.width = width
     self.height = height
     self.photo_w = self.width
@@ -36,7 +37,7 @@ class Canvas(Widget):
   
   def get_canvas(self, filename="제목없음"):
     self.get_filename(filename)
-    frame, frame2 = self.get_widget(count=self.count)
+    frame, frame2 = self.get_widget(count=self.count, mode="canvas")
     self.frame = frame
     canvas = self.make_canvas(frame2, filename=filename)
     self.canvas = canvas
@@ -62,6 +63,7 @@ class Canvas(Widget):
 
 
     sizegrip = ttk.Sizegrip(frame)
+    self.sizegrip = sizegrip
     sizegrip.place(x = canvas.winfo_rootx() + canvas.winfo_reqwidth() - sizegrip.winfo_reqwidth(),
                   y = canvas.winfo_rooty() + canvas.winfo_reqheight() + 32)
 
@@ -86,6 +88,8 @@ class Canvas(Widget):
     elif mode == "c":
       self.reload_li.append(c_img)
     self.canvas_img  = copy.copy(img)
+    '''
+    이미지, 캔버스 사이즈 조정 기능이 없을 때 사이즈 최적화를 위해 만든 코드, 필요 없어짐
     h, w = img.shape[:2]
     if not self.changed and w > self.width or h > self.height:
       if h > w and self.width > self.height or h < w and self.width < self.height:
@@ -104,6 +108,9 @@ class Canvas(Widget):
         src = cv2.resize(img, dsize = (self.photo_w, _height-10))
     else:
       src = img
+    '''
+    self.canvas.delete("all")
+    src = img
     tk_img = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
     photo = Image.fromarray(tk_img)   
     # self.paper : Prevent PhotoImage object being garbage collected!!!

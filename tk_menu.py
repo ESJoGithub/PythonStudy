@@ -43,7 +43,7 @@ class menubar(Methods):
     menu_3.add_command(label="색조", command=lambda: self.hsv_control(mode="Hue"))
     menu_3.add_command(label="채도", command=lambda: self.hsv_control(mode="saturation"))
     menu_3.add_separator()
-    menu_3.add_command(label="이미지 크기")
+    menu_3.add_command(label="이미지 크기", command=self.reset_photo_size)
     menu_3.add_command(label="캔버스 크기", command=self.reset_canvas_size)
     menu_3.add_separator()
     menu_3.add_command(label="이미지 180도 회전", command=lambda: self.rotation(mode=2))

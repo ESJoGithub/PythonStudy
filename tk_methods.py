@@ -1,3 +1,4 @@
+from ctypes import resize
 import tkinter as tk
 from tkinter import filedialog
 from tk_canvas import Canvas
@@ -119,6 +120,15 @@ class Methods(Controller):
     """작업 취소 시 작업 취소 전 실행 내역"""
     img = Controller.current_can.reload_li.pop()
     Controller.current_can.paint_canvas(img)
+
+  def cut(self):
+    pass
+  
+  def copy(self):
+    pass
+
+  def paste(self):
+    pass
 
   '''index에 연산을 바로 집어넣지 말자... 에러 가능성이 있음
     오버플로우를 방지할 수 있도록 이미지 type 선정에 신중해야 함.
@@ -376,7 +386,7 @@ class Methods(Controller):
     _widget = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 1                                                                        # 위젯 호출 횟수. 위젯들 간 위치 설정을 위해 활용(0부터 시작하므로 위젯 객체 생성 후 +1)
     self.ls_chk = False
-    br_btn = _widget.get_Scale(title = "명암조절", start=-255, end=255, term=1, tick=255)  
+    br_btn = _widget.get_Scale(title = "밝기조절", start=-255, end=255, term=1, tick=255)  
     br_btn.config(command=lambda : self.lightNShade(bar=_widget.scale.get()))                    # "확인 버튼"과 contrast 함수 호출 연결     
 
   def lightNShade(self, bar=str(0)):
@@ -400,7 +410,7 @@ class Methods(Controller):
     _widget = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 1                                                                        # 위젯 호출 횟수. 위젯들 간 위치 설정을 위해 활용(0부터 시작하므로 위젯 객체 생성 후 +1)
     self.ct_chk = False
-    br_btn = _widget.get_Scale(title = "명암조절", start=0, end=10, term=0.1, tick=1)  
+    br_btn = _widget.get_Scale(title = "명암대비", start=0, end=10, term=0.1, tick=1)  
     br_btn.config(command=lambda : self.contrast(bar=_widget.scale.get())) 
   
   def contrast(self, bar=str(1)):
@@ -420,18 +430,65 @@ class Methods(Controller):
     self.ct_chk = True    
 
   def reset_photo_size(self):
-    pass
+    _img = Controller.current_can.canvas_img
+    _widget = Run_widget(self.window, count=self.wg_count)
+    self.wg_count += 1
+    size_btn = _widget.get_photosize(title="이미지 사이즈 조정", _img = _img)
+    size_btn.config(command=lambda : self.photo_size(_widget.check, _widget.spin.get(),_widget.spin1.get(), _widget.spin2.get()))
+
+  def photo_size(self, check, ratio, width, height):
+    ratio, width, height = int(ratio), int(width), int(height)
+    _img = Controller.current_can.canvas_img
+    resized_img = None
+    if check:
+      size = ratio/100
+      _h, _w, _c =  _img.shape
+      re_h = int(np.ceil(_h*size))
+      re_w = int(np.ceil(_w*size))
+      resized_img = np.zeros(shape=(re_h, re_w, _c), dtype = "uint8")
+
+      _size = 1/size
+      for y in range(re_h):
+        r_y = int(y*_size)
+        for x in range(re_w):
+          r_x = int(x*_size)
+          resized_img[y, x] = _img[r_y][r_x]
+    else:
+      _h, _w, _c = _img.shape
+      resized_img = np.zeros(shape=(height, width, _c), dtype = "uint8")
+      step_y = _h/height
+      step_x = _w/width
+
+      for y in range(height):
+        y_idx = int(step_y * y)
+        if y_idx > _h-1:
+          y_idx = _h-1
+        y_img = _img[y_idx]
+        for x in range(width):
+          x_idx = int(step_x * x)
+          if x_idx > _w-1:
+            x_idx = x-1
+          resized_img[y, x] = y_img[x_idx]
+    Controller.current_can.paint_canvas(resized_img)
 
   def reset_canvas_size(self):
-    size_widget = Canvas(self.window, width=300)
-    size_widget.x = self.window.winfo_width() - 320
-    size_widget.y = self.window.winfo_y() - self.window.winfo_rooty() + 60
-    size_widget = size_widget.make_Widget(mode="canvas_resize", title="캔버스 크기 조정", _resizable=False)
-    def confirm():
-      Controller.current_can.changed = True
-      Controller.current_can.width = int()
-      Controller.current_can.height = int()
-      Controller.current_can.canvas.create_image(self.width//2, self.height//2, image=self.paper)
+    _widget = Run_widget(self.window, count=self.wg_count)
+    self.wg_count += 1
+    size_btn = _widget.get_Spin(title="캔버스 사이즈 조정")
+    size_btn.config(command=lambda : self.canvas_size(_w = _widget.spin1.get(), _h = _widget.spin2.get()))
+
+  def canvas_size(self, _w, _h):
+    _w = int(_w)
+    _h = int(_h)
+    _temp = Controller.current_can
+    _temp.canvas.configure(width = _w, height = _h)
+
+    _temp.sizegrip.place(x = _temp.canvas.winfo_x() + _temp.canvas.winfo_reqwidth() - _temp.sizegrip.winfo_reqwidth(),
+                        y = _temp.canvas.winfo_y() + _temp.canvas.winfo_reqheight() + 32)
+    if _temp.paper is not None :
+        _temp.canvas.delete("all")
+        _temp.canvas.create_image(_w//2, _h//2, image=_temp.paper)
+    Controller.current_can = _temp
 
   def rotation(self, mode=1):
     canvas_img = Controller.current_can.canvas_img

@@ -11,7 +11,7 @@ class Widget():
     self.y = 0
     self.name = str()
 
-  def get_widget(self, title=None, count=1):
+  def get_widget(self, title=None, count=1, mode="widget"):
     if title is not None:
       self.name = title
 
@@ -20,10 +20,12 @@ class Widget():
     main_frame.place(x=self.x, y = self.y)
     f_Event = Widget_Event(self.window, count = count)
     f_Event.set_widget(self.widget)
-
     frame1 = tk.Frame(main_frame, relief="solid", bd=1)
     frame1.pack(side="top", fill="x")
-    frame1.bind("<Button-1>", f_Event.click)
+    if mode== "canvas":
+      frame1.bind("<Button-1>", f_Event.canvas_click)
+    else:
+      frame1.bind("<Button-1>", f_Event.click)
     frame1.bind("<B1-Motion>", f_Event.move)
     frame1.bind("<ButtonRelease-1>", f_Event.release)
     label1 = tk.Label(frame1, text=self.name, height=1)

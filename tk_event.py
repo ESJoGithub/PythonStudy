@@ -11,8 +11,14 @@ class Widget_Event(Controller):
   
   def set_widget(self, widget):
     self.widget = widget
-  
+
   def click(self, event):
+    self.dragging = True
+    pos_x = event.x_root
+    pos_y = event.y_root
+    self.drag_pos = [pos_x, pos_y]
+
+  def canvas_click(self, event):
     self.dragging = True
     pos_x = event.x_root
     pos_y = event.y_root
@@ -43,7 +49,7 @@ class Widget_Event(Controller):
   def value_Check(self, value=str(), _min=0, _max=3840):
     if value.isdigit():
       valid = False
-      if int(_min) <= int(value) <= _max:
+      if int(_min) <= int(value) <= int(_max):
         valid = True
     elif value == "":
       valid = True
@@ -58,7 +64,6 @@ class Widget_Event(Controller):
     error_msg.place(relx=0.17, rely=0.2)
     btn = tk.Button(error, text="닫기", command=error.destroy)
     btn.place(relx=0.42, rely=0.6)
-
 
   def release(self, event):
       self.widget.place(x = self.drag_pos[0], y = self.drag_pos[1])
