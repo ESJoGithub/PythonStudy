@@ -1,5 +1,4 @@
 import tkinter as tk
-from turtle import width
 from tk_widget import Widget
 from tk_event import Widget_Event
 

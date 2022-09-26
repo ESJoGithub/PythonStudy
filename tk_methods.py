@@ -1,4 +1,3 @@
-from ctypes import resize
 import tkinter as tk
 from tkinter import filedialog
 from tk_canvas import Canvas
@@ -111,6 +110,65 @@ class Methods(Controller):
     btn_cancel = tk.Button(save_alert, text="아니오", padx=10, command=save_alert.destroy)
     btn_cancel.place(relx=0.57, rely=0.6)
 
+  def crop(self, start, end, alert):
+    s_x = start[0]
+    s_y = start[1]
+    e_x = end[0]
+    e_y = end[1]
+
+    if s_x > e_x :
+      temp = s_x
+      s_x = e_x
+      e_x = temp
+    if s_y > e_y :
+      temp = s_y
+      s_y = e_y
+      e_y = temp
+
+    _temp = Controller.current_can
+    c_img = copy.copy(_temp.canvas_img)
+    _h, _w, _c = c_img.shape
+
+    y_idx_s = (_temp.height-_h)//2
+    x_idx_s = (_temp.width-_w)//2
+    
+    if s_x <= x_idx_s:
+      s_x = 0
+    else:
+      s_x = s_x - x_idx_s
+    if e_x - x_idx_s >= _w:
+      e_x = _w
+    elif e_x - x_idx_s > 0:
+      e_x = e_x - x_idx_s
+    else :
+      e_x = 0
+  
+    if s_y <= y_idx_s:
+      s_y = 0
+    else:
+      s_y = s_y - y_idx_s
+    if e_y - y_idx_s >= _h:
+      e_y = _h
+    elif e_y - y_idx_s > 0:
+      e_y = e_y - y_idx_s
+    else:
+      e_y = 0
+
+    croped_img = np.zeros(shape=(e_y-s_y, e_x-s_x, _c), dtype="uint8")
+    for y in range(s_y, e_y):
+      y_idx = y-s_y
+      for x in range(s_x, e_x):
+        x_idx = x - s_x
+        croped_img[y_idx, x_idx] = c_img[y, x]
+    Controller.current_can.paint_canvas(croped_img)
+    alert.destroy()
+
+  def copy(self):
+    pass
+
+  def pase(self):
+    pass
+
   def cancel(self):
     """작업 취소 내역"""
     img = Controller.current_can.cancel_li.pop()
@@ -120,15 +178,6 @@ class Methods(Controller):
     """작업 취소 시 작업 취소 전 실행 내역"""
     img = Controller.current_can.reload_li.pop()
     Controller.current_can.paint_canvas(img)
-
-  def cut(self):
-    pass
-  
-  def copy(self):
-    pass
-
-  def paste(self):
-    pass
 
   '''index에 연산을 바로 집어넣지 말자... 에러 가능성이 있음
     오버플로우를 방지할 수 있도록 이미지 type 선정에 신중해야 함.

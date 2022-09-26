@@ -17,7 +17,7 @@ class Canvas(Widget):
     self.height = height
     self.photo_w = self.width
     self.photo_h = self.height-10
-    self.x = (count%5) * 30 + 30
+    self.x = (count%5) * 100 + 30
     self.y = (count%10) * 50
     self.filename = "제목없음"
     self.count = count
