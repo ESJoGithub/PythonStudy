@@ -1,4 +1,3 @@
-from sqlite3 import Cursor
 import tkinter as tk
 from tk_methods import Methods
 from tk_controller import Controller
@@ -25,16 +24,6 @@ class menubar(Methods):
     self.btn6 = None
     self.btn7 = None
     self.btn8 = None
-    self.submenu = object
-    self.alert = object
-    self.alert_msg = object
-    self.start = []
-    self.end = []
-    self.mode = "select"
-    self.color = "black"
-    self.msg = ""
-    self.relx = 30
-    self.confirm = None
 
   def run_menu(self):
 
@@ -112,8 +101,8 @@ class menubar(Methods):
     btn_img2 = Image.open("02_save.png")
     btn_img3 = Image.open("03_select.png")
     btn_img4 = Image.open("04_crop.png")
-    btn_img5 = Image.open("05_copy.png")
-    btn_img6 = Image.open("06_paste.png")
+    btn_img5 = Image.open("05_line.png")
+    btn_img6 = Image.open("06_shapes.png")
     btn_img7 = Image.open("07_pen.png")
     btn_img8 = Image.open("08_dopper.png")
     btn_img1 = btn_img1.resize((30, 30))
@@ -139,10 +128,10 @@ class menubar(Methods):
     self.btn2 = tk.Button(sb_mn, image=self.btn_img2, width=35, height=35, command=self.file_save,
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn2.grid(row=2, column=1, padx=5, pady=7)
-    self.btn3 = tk.Button(sb_mn, image=self.btn_img3, width=35, height=35,
+    self.btn3 = tk.Button(sb_mn, image=self.btn_img3, width=35, height=35, command=self.select_event,
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn3.grid(row=3, column=1, padx=5, pady=7)
-    self.btn4 = tk.Button(sb_mn, image=self.btn_img4, width=35, height=35, command=self.crop_event,
+    self.btn4 = tk.Button(sb_mn, image=self.btn_img4, width=35, height=35, command=lambda:self.select_event(mode="crop"),
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn4.grid(row=4, column=1, padx=5, pady=7)
     self.btn5 = tk.Button(sb_mn, image=self.btn_img5, width=35, height=35,
@@ -157,63 +146,3 @@ class menubar(Methods):
     self.btn8 = tk.Button(sb_mn, image=self.btn_img8, width=35, height=35,
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn8.grid(row=8, column=1, padx=5, pady=7)
-
-  def crop_event(self):
-    self.mode = "crop"
-    Controller.current_can.canvas.config(cursor="tcross")
-    Controller.current_can.canvas.bind("<Button-1>", self.paint_click)
-    Controller.current_can.canvas.bind("<B1-Motion>", self.paint_move)
-    Controller.current_can.canvas.bind("<ButtonRelease-1>", self.paint_released)
-
-  def paint_reset(self, event):
-    Controller.current_can.canvas.delete(self.submenu)
-
-  def paint_click(self, event):
-    pos_x = event.x
-    pos_y = event.y
-    self.start = [pos_x, pos_y]
-  
-  def paint_move(self, event, _color="black"):
-    pos_x = event.x
-    pos_y = event.y
-    Controller.current_can.canvas.delete(self.submenu)
-    self.submenu = Controller.current_can.canvas.create_rectangle(self.start[0], 
-                  self.start[1], pos_x, pos_y, outline=_color)
-
-  def paint_released(self, event):
-    pos_x = event.x
-    pos_y = event.y
-    self.end = [pos_x, pos_y]
-    if self.mode == "select":
-      self.submenu = Controller.current_can.canvas.create_rectangle(self.start[0], 
-                    self.start[1], pos_x, pos_y, outline="gray90")
-      return
-
-    elif self.mode == "pen":
-      self.submenu = Controller.current_can.canvas.create_line(self.self.start[0], 
-                      self.start[1], pos_x, pos_y, outline=self.color)
-      return
-
-    elif self.mode == "crop":
-      self.msg = "해당 영역만 남기고 삭제하시겠습니까?"
-      self.relx = 25
-      self.confirm = lambda: self.crop(self.start, self.end, self.alert)
-      
-    elif self.mode == "copy":
-      self.msg = "해당 영역을 복사합니다."
-      self.relx = 30
-      self.confirm = None
-    
-    alert = tk.Toplevel(self.window)
-    alert.geometry("300x100+450+400")
-    alert.resizable(False, False)
-    self.alert = alert
-    alert_msg = tk.Message(alert, text=self.msg, width=300, aspect=300, anchor="center")
-    alert_msg.place(relx=25, rely=0.2)
-    self.alert_msg = alert_msg
-    btn_confirm = tk.Button(alert, text="예", padx=22, command=self.confirm)
-    btn_confirm.place(relx=0.2, rely=0.6)
-    btn_cancel = tk.Button(alert, text="아니오", padx=10, command=alert.destroy)
-    btn_cancel.place(relx=0.57, rely=0.6)
-
-    Controller.current_can.canvas.bind("<Button-1>", self.paint_reset)

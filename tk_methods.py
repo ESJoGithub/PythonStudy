@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tk_canvas import Canvas
 from tk_run_widgets import Run_widget
+from tk_event import Widget_Event
 from tk_controller import Controller
 import cv2
 import numpy as np
@@ -110,64 +111,29 @@ class Methods(Controller):
     btn_cancel = tk.Button(save_alert, text="아니오", padx=10, command=save_alert.destroy)
     btn_cancel.place(relx=0.57, rely=0.6)
 
-  def crop(self, start, end, alert):
-    s_x = start[0]
-    s_y = start[1]
-    e_x = end[0]
-    e_y = end[1]
+  def select_event(self, mode="select"):
+    try:
+      if Controller.binding1 is not None:
+        Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
+      if Controller.binding2 is not None:
+        Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
+      if Controller.binding3 is not None:
+        Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)
+    except:
+      pass
 
-    if s_x > e_x :
-      temp = s_x
-      s_x = e_x
-      e_x = temp
-    if s_y > e_y :
-      temp = s_y
-      s_y = e_y
-      e_y = temp
-
-    _temp = Controller.current_can
-    c_img = copy.copy(_temp.canvas_img)
-    _h, _w, _c = c_img.shape
-
-    y_idx_s = (_temp.height-_h)//2
-    x_idx_s = (_temp.width-_w)//2
-    
-    if s_x <= x_idx_s:
-      s_x = 0
-    else:
-      s_x = s_x - x_idx_s
-    if e_x - x_idx_s >= _w:
-      e_x = _w
-    elif e_x - x_idx_s > 0:
-      e_x = e_x - x_idx_s
-    else :
-      e_x = 0
-  
-    if s_y <= y_idx_s:
-      s_y = 0
-    else:
-      s_y = s_y - y_idx_s
-    if e_y - y_idx_s >= _h:
-      e_y = _h
-    elif e_y - y_idx_s > 0:
-      e_y = e_y - y_idx_s
-    else:
-      e_y = 0
-
-    croped_img = np.zeros(shape=(e_y-s_y, e_x-s_x, _c), dtype="uint8")
-    for y in range(s_y, e_y):
-      y_idx = y-s_y
-      for x in range(s_x, e_x):
-        x_idx = x - s_x
-        croped_img[y_idx, x_idx] = c_img[y, x]
-    Controller.current_can.paint_canvas(croped_img)
-    alert.destroy()
-
-  def copy(self):
-    pass
-
-  def pase(self):
-    pass
+    select_Event = Widget_Event(self.window)
+    if mode == "select":
+      _cursor = "lr_angle"
+      select_Event.color = "gray50"
+      Controller.binding3 = Controller.current_can.canvas.bind("<ButtonRelease-1>", select_Event.select_released)
+    elif mode == "crop":
+      _cursor = "tcross"
+      select_Event.color = "black"
+      Controller.binding3 = Controller.current_can.canvas.bind("<ButtonRelease-1>", select_Event.crop_released)
+    Controller.current_can.canvas.config(cursor=_cursor)
+    Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", select_Event.select_click)
+    Controller.binding2 = Controller.current_can.canvas.bind("<B1-Motion>", select_Event.select_drag)
 
   def cancel(self):
     """작업 취소 내역"""

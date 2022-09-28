@@ -1,7 +1,11 @@
 class Controller:
   global sub_windows
-  sub_windows = {}
   global current_can
+  global binding1
+  global binding2
+  global binding3
+
+  sub_windows = {}
   current_can = object
 
   def show_subwin(_count):
