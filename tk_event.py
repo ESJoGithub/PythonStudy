@@ -111,7 +111,7 @@ class Widget_Event(Controller):
     elif self.selected == 2:
       pos_x = event.x
       pos_y = event.y
-      self.selected_move(pos_x, pos_y)
+      self.selected_move()
     else:
       self.selected = 0;
 
@@ -141,7 +141,10 @@ class Widget_Event(Controller):
     Controller.current_can.canvas.bind("<Button-1>", self.select_reset)
     Controller.current_can.canvas.config(cursor="arrow")
 
-  def get_selected_img(self):
+  def selected_move(self):
+    pass
+    
+  def crop(self):
     s_x = self.start[0]
     s_y = self.start[1]
     e_x = self.end[0]
@@ -184,40 +187,13 @@ class Widget_Event(Controller):
       e_y = e_y - y_idx_s
     else:
       e_y = 0
-    
-    selected_idx = [s_x, s_y]
-    fill_white = np.full(shape=(_c), fill_value=255, dtype="uint8")
-    deselected_img = copy.copy(c_img)
+
     selected_img = np.zeros(shape=(e_y-s_y, e_x-s_x, _c), dtype="uint8")
     for y in range(s_y, e_y):
       y_idx = y-s_y
       for x in range(s_x, e_x):
         x_idx = x - s_x
         selected_img[y_idx, x_idx] = c_img[y, x]
-        deselected_img[y, x] = fill_white
-
-    return selected_img, deselected_img, selected_idx
-
-  '''def selected_move(self, pos_x, pos_y):
-    selected_img, deselected_img, selected_idx = self.get_selected_img()
     
-    _h, _w, _c = deselected_img.shape
-    se_h, se_w = selected_img.shape[:2]
-    gap_x = pos_x-self.start[0]
-    gap_y = pos_y-self.start[1]
-    s_x = selected_idx[0] + gap_x
-    s_y = selected_idx[1] + gap_y
-
-    if s_x < 0:
-      s_x = 0
-    if s_x > _w:
-      s_x = _w
-    if s_y < 0:
-      s_y = 0
-    if s_y > _h:
-      s_y = _h'''
-    
-  def crop(self):
-    selected_img = self.get_selected_img()[:1]
     Controller.current_can.paint_canvas(selected_img) 
     self.select_reset()
