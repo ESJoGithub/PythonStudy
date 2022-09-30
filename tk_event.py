@@ -1,10 +1,9 @@
-from select import select
 import tkinter as tk
-import numpy as np
 import copy
+import numpy as np
+import cv2
+from PIL import Image, ImageTk
 from tk_controller import Controller
-
-
 
 class Widget_Event(Controller):
   def __init__(self, window, count=1):
@@ -17,12 +16,12 @@ class Widget_Event(Controller):
     self.count = count
     self.select_range = object
     self.selected = 0
-    self.alert = object
+    self.alert = None
     self.mode = "select"
     self.color = "black"
-    self.msg = ""
-    self.relx = 30
-    self.confirm = None
+    self.selected_img = None
+    self.deselected_img = None
+    self.mv = None
 
   def set_widget(self, widget):
     self.widget = widget
@@ -87,14 +86,6 @@ class Widget_Event(Controller):
   def close(self):
       self.widget.destroy()
 
-  def select_reset(self):
-    self.selected = 0
-    self.alert.destroy()
-    Controller.current_can.canvas.delete(self.select_range)
-    Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
-    Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
-    Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)
-
   def select_click(self, event):
     pos_x = event.x
     pos_y = event.y
@@ -111,15 +102,20 @@ class Widget_Event(Controller):
     elif self.selected == 2:
       pos_x = event.x
       pos_y = event.y
-      self.selected_move()
+      _temp = Controller.current_can
+      _temp.paint_canvas(img = self.deselected_img)
+      #if self.mv is not None:
+      #  _temp.canvas.delete(self.mv)  
+      self.mv = _temp.paint_canvas(img = self.selected_img, p_x = pos_x, p_y = pos_y, mode="mv")
     else:
-      self.selected = 0;
+      self.select_reset()
 
   def select_released(self, event):
     pos_x = event.x
     pos_y = event.y
     self.end = [pos_x, pos_y]
     Controller.current_can.canvas.config(cursor="fleur")
+    self.select()
 
   def crop_released(self, event):
     pos_x = event.x
@@ -133,7 +129,7 @@ class Widget_Event(Controller):
     _var.set("해당 영역만 남기고 삭제하시겠습니까?")
     alert_msg = tk.Message(self.alert, textvariable=_var, width=300, aspect=300, anchor="center")
     alert_msg.pack(pady=20)
-    btn_confirm = tk.Button(alert, text="예", padx=22, command=self.crop)
+    btn_confirm = tk.Button(alert, text="예", padx=22, command=self.select)
     btn_confirm.place(relx=0.2, rely=0.6)
     btn_cancel = tk.Button(alert, text="아니오", padx=10, command=self.select_reset)
     btn_cancel.place(relx=0.57, rely=0.6)
@@ -141,10 +137,7 @@ class Widget_Event(Controller):
     Controller.current_can.canvas.bind("<Button-1>", self.select_reset)
     Controller.current_can.canvas.config(cursor="arrow")
 
-  def selected_move(self):
-    pass
-    
-  def crop(self):
+  def select(self):
     s_x = self.start[0]
     s_y = self.start[1]
     e_x = self.end[0]
@@ -188,12 +181,35 @@ class Widget_Event(Controller):
     else:
       e_y = 0
 
+    self.s_x = s_x
+    self.s_y = s_y
     selected_img = np.zeros(shape=(e_y-s_y, e_x-s_x, _c), dtype="uint8")
+    deselected_img = copy.copy(c_img)
     for y in range(s_y, e_y):
       y_idx = y-s_y
       for x in range(s_x, e_x):
         x_idx = x - s_x
         selected_img[y_idx, x_idx] = c_img[y, x]
-    
-    Controller.current_can.paint_canvas(selected_img) 
-    self.select_reset()
+        deselected_img[y, x][:] = 255
+
+    if self.mode == "crop":
+      Controller.current_can.paint_canvas(selected_img)
+      self.select_reset()
+    elif self.mode == "select" and self.selected == 1:
+      self.selected_img = selected_img
+      self.deselected_img = deselected_img
+      Controller.current_can.paint_canvas(img = self.deselected_img)
+    elif self.mode == "select" and self.selected == 2:
+      self.select_reset()
+
+  def select_reset(self):
+    self.selected = 0
+    if self.alert is not None:
+      self.alert.destroy()
+    else:
+      Controller.current_can.canvas.config(cursor="arrow")
+
+    Controller.current_can.canvas.delete(self.select_range)
+    Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
+    Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
+    Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)

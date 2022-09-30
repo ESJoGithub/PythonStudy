@@ -24,6 +24,7 @@ class Canvas(Widget):
     self.origin = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
     self.cv2_img = np.zeros(shape=(self.height, self.width, 3), dtype=np.uint8)
     self.canvas_img = np.full(shape=(self.height, self.width, 3), fill_value=255, dtype=np.uint8)
+    self.selected_img = None
     self.paper = None
     self.changed = False
     self.cancel_li = []
@@ -81,12 +82,17 @@ class Canvas(Widget):
     
     return self.canvas
 
-  def paint_canvas(self, img, mode=None):
+  def paint_canvas(self, img, p_x=0, p_y=0, mode=None):
     c_img = copy.copy(self.canvas_img)
+    if p_x == 0:
+      p_x = self.width//2
+    if p_y == 0:
+      p_y = self.height//2
     if mode != "c":
       self.cancel_li.append(c_img)
     elif mode == "c":
       self.reload_li.append(c_img)
+    
     self.canvas_img  = copy.copy(img)
     '''
     이미지, 캔버스 사이즈 조정 기능이 없을 때 사이즈 최적화를 위해 만든 코드, 필요 없어짐
@@ -109,11 +115,17 @@ class Canvas(Widget):
     else:
       src = img
     '''
-    self.canvas.delete("all")
+    if mode == "mv":
+      print("skip")
+    else:
+      self.canvas.delete("all")
+      print("clear")
+    
     src = img
     tk_img = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
     photo = Image.fromarray(tk_img)   
+
     # self.paper : Prevent PhotoImage object being garbage collected!!!
     self.paper = ImageTk.PhotoImage(image=photo, master=self.canvas)
     self.canvas.configure(width=self.width, height=self.height, relief="raised")
-    self.canvas.create_image(self.width//2, self.height//2, image=self.paper)
+    self.canvas.create_image(p_x, p_y, image=self.paper)

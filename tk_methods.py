@@ -123,6 +123,7 @@ class Methods(Controller):
       pass
 
     select_Event = Widget_Event(self.window)
+    select_Event.mode = mode
     if mode == "select":
       _cursor = "lr_angle"
       select_Event.color = "gray50"
