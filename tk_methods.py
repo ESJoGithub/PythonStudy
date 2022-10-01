@@ -21,6 +21,7 @@ class Methods(Controller):
     self.hue_chk = False
     self.wg_count = 0
     self.count_frames = 0
+    self.event_call = False
 
   def reset(self):
     self.gray_chk = False
@@ -112,6 +113,10 @@ class Methods(Controller):
     btn_cancel.place(relx=0.57, rely=0.6)
 
   def select_event(self, mode="select"):
+    if self.event_call:
+      img = Controller.current_can.canvas_img
+      Controller.current_can.paint_canvas(img)
+
     try:
       if Controller.binding1 is not None:
         Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
@@ -119,10 +124,13 @@ class Methods(Controller):
         Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
       if Controller.binding3 is not None:
         Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)
+      if Controller.binding4 is not None:
+        Controller.current_can.canvas.unbind("<Button-3>", Controller.binding4)
     except:
       pass
 
     select_Event = Widget_Event(self.window)
+    self.event_call = True
     select_Event.mode = mode
     if mode == "select":
       _cursor = "lr_angle"
@@ -135,6 +143,8 @@ class Methods(Controller):
     Controller.current_can.canvas.config(cursor=_cursor)
     Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", select_Event.select_click)
     Controller.binding2 = Controller.current_can.canvas.bind("<B1-Motion>", select_Event.select_drag)
+    Controller.binding4 = Controller.current_can.canvas.bind("Button-3>", select_Event.select_right_click)
+    self.event_call = select_Event.call
 
   def cancel(self):
     """작업 취소 내역"""

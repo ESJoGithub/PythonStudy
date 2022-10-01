@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from tk_widget import Widget
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageGrab
 import cv2
 import numpy as np
 import copy
@@ -122,7 +122,7 @@ class Canvas(Widget):
     self.canvas.configure(width=self.width, height=self.height, relief="raised")
     self.canvas.create_image(self.width//2, self.height//2, image=self.paper)
 
-  def move_paint(self, img_mv, img_bg=None, p_x=0, p_y=0):
+  def move_paint(self, img_mv, img_bg=None, p_x=0, p_y=0, save=False):
     self.canvas.delete("all")
     if img_bg is not None:
       tk_img_bg = cv2.cvtColor(img_bg, cv2.COLOR_BGR2RGB)
@@ -135,3 +135,11 @@ class Canvas(Widget):
     photo = Image.fromarray(tk_img)   
     self.paper = ImageTk.PhotoImage(image=photo, master=self.canvas)
     self.canvas.create_image(p_x, p_y, image=self.paper)
+    if save :
+      box = (self.canvas.winfo_rootx()-3, self.canvas.winfo_rooty()-3, 
+            self.canvas.winfo_rootx() + self.canvas.winfo_reqwidth(), 
+            self.canvas.winfo_rooty() + self.canvas.winfo_reqheight())
+      img = ImageGrab.grab(box)
+      img = np.asarray(img)
+      img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+      self.paint_canvas(img)

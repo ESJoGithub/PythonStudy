@@ -1,10 +1,7 @@
 import tkinter as tk
 import copy
-from turtle import width
+from imageio import save
 import numpy as np
-import cv2
-from PIL import Image, ImageTk
-from soupsieve import select
 from tk_controller import Controller
 
 class Widget_Event(Controller):
@@ -17,13 +14,14 @@ class Widget_Event(Controller):
     self.dragging = False
     self.count = count
     self.select_range = object
+    self.call = True
     self.selected = 0
     self.alert = None
     self.mode = "select"
     self.color = "black"
     self.selected_img = None
     self.deselected_img = None
-    self.mv = None
+    self.c_img = None
 
   def set_widget(self, widget):
     self.widget = widget
@@ -93,7 +91,7 @@ class Widget_Event(Controller):
     pos_y = event.y
     self.start = [pos_x, pos_y]
     self.selected += 1
-  
+
   def select_right_click(self, event):
     pass
   
@@ -108,7 +106,7 @@ class Widget_Event(Controller):
       pos_x = event.x
       pos_y = event.y
       _temp = Controller.current_can
-      self.mv = _temp.move_paint(img_mv = self.selected_img, img_bg = self.deselected_img, p_x = pos_x, p_y = pos_y)
+      _temp.move_paint(img_mv = self.selected_img, img_bg = self.deselected_img, p_x = pos_x, p_y = pos_y)
     else:
       self.select_reset()
 
@@ -156,6 +154,7 @@ class Widget_Event(Controller):
 
     _temp = Controller.current_can
     c_img = copy.copy(_temp.canvas_img)
+    self.c_img = c_img
     _h, _w, _c = c_img.shape
 
     y_idx_s = (_temp.height-_h)//2
@@ -201,17 +200,19 @@ class Widget_Event(Controller):
       self.selected_img = selected_img
       self.deselected_img = deselected_img
     elif self.mode == "select" and self.selected == 2:
+      _temp.move_paint(img_mv = self.selected_img, img_bg = self.deselected_img, p_x = self.end[0], p_y = self.end[1], save=True)
       self.select_confirm()
 
   def select_reset(self):
     self.selected = 0
+    self.call = False
     self.alert.destroy()
     Controller.current_can.canvas.config(cursor="arrow")
-
     Controller.current_can.canvas.delete(self.select_range)
     Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
     Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
     Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)
+    Controller.current_can.canvas.unbind("<Button-3>", Controller.binding4)
 
   def select_confirm(self):
     alert = tk.Toplevel(self.window)
@@ -228,9 +229,7 @@ class Widget_Event(Controller):
     btn_cancel.place(relx=0.57, rely=0.6)
 
   def select_cancel(self):
-    _temp = Controller.current_can
-    c_img = copy.copy(_temp.canvas_img)
-    Controller.current_can.paint_canvas(img = c_img, mode="c")
+    Controller.current_can.paint_canvas(img = self.c_img, mode="c")
     self.select_reset()
 
 
