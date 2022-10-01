@@ -26,6 +26,7 @@ class Canvas(Widget):
     self.canvas_img = np.full(shape=(self.height, self.width, 3), fill_value=255, dtype=np.uint8)
     self.selected_img = None
     self.paper = None
+    self.paper_bg =None
     self.changed = False
     self.cancel_li = []
     self.reload_li = []
@@ -82,12 +83,8 @@ class Canvas(Widget):
     
     return self.canvas
 
-  def paint_canvas(self, img, p_x=0, p_y=0, mode=None):
+  def paint_canvas(self, img, mode=None):
     c_img = copy.copy(self.canvas_img)
-    if p_x == 0:
-      p_x = self.width//2
-    if p_y == 0:
-      p_y = self.height//2
     if mode != "c":
       self.cancel_li.append(c_img)
     elif mode == "c":
@@ -115,12 +112,7 @@ class Canvas(Widget):
     else:
       src = img
     '''
-    if mode == "mv":
-      print("skip")
-    else:
-      self.canvas.delete("all")
-      print("clear")
-    
+    self.canvas.delete("all")
     src = img
     tk_img = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
     photo = Image.fromarray(tk_img)   
@@ -128,4 +120,18 @@ class Canvas(Widget):
     # self.paper : Prevent PhotoImage object being garbage collected!!!
     self.paper = ImageTk.PhotoImage(image=photo, master=self.canvas)
     self.canvas.configure(width=self.width, height=self.height, relief="raised")
+    self.canvas.create_image(self.width//2, self.height//2, image=self.paper)
+
+  def move_paint(self, img_mv, img_bg=None, p_x=0, p_y=0):
+    self.canvas.delete("all")
+    if img_bg is not None:
+      tk_img_bg = cv2.cvtColor(img_bg, cv2.COLOR_BGR2RGB)
+      photo_bg = Image.fromarray(tk_img_bg)
+      self.paper_bg = ImageTk.PhotoImage(image=photo_bg, master=self.canvas)
+      self.canvas.configure(width=self.width, height=self.height, relief="raised")
+      self.canvas.create_image(self.width//2, self.height//2, image=self.paper_bg)
+    src = img_mv
+    tk_img = cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
+    photo = Image.fromarray(tk_img)   
+    self.paper = ImageTk.PhotoImage(image=photo, master=self.canvas)
     self.canvas.create_image(p_x, p_y, image=self.paper)

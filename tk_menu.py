@@ -43,11 +43,9 @@ class menubar(Methods):
     menu_2.add_command(label="실행 취소", command= self.cancel)
     menu_2.add_command(label="다시 실행", command= self.reload)
     menu_2.add_separator()
-    menu_2.add_command(label="잘라내기")
+    menu_2.add_command(label="잘라내기", command=lambda:self.select_event(mode="crop"))
     menu_2.add_command(label="복사")
     menu_2.add_command(label="붙여넣기")
-    menu_2.add_separator()
-    menu_2.add_command(label="잘라낸 부분 저장")
     menubar.add_cascade(label="편집", menu=menu_2)
 
     menu_3 = tk.Menu(menubar, tearoff=0)  

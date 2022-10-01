@@ -1,8 +1,10 @@
 import tkinter as tk
 import copy
+from turtle import width
 import numpy as np
 import cv2
 from PIL import Image, ImageTk
+from soupsieve import select
 from tk_controller import Controller
 
 class Widget_Event(Controller):
@@ -92,6 +94,9 @@ class Widget_Event(Controller):
     self.start = [pos_x, pos_y]
     self.selected += 1
   
+  def select_right_click(self, event):
+    pass
+  
   def select_drag(self, event):
     if self.selected == 1:
       pos_x = event.x
@@ -103,10 +108,7 @@ class Widget_Event(Controller):
       pos_x = event.x
       pos_y = event.y
       _temp = Controller.current_can
-      _temp.paint_canvas(img = self.deselected_img)
-      #if self.mv is not None:
-      #  _temp.canvas.delete(self.mv)  
-      self.mv = _temp.paint_canvas(img = self.selected_img, p_x = pos_x, p_y = pos_y, mode="mv")
+      self.mv = _temp.move_paint(img_mv = self.selected_img, img_bg = self.deselected_img, p_x = pos_x, p_y = pos_y)
     else:
       self.select_reset()
 
@@ -198,18 +200,37 @@ class Widget_Event(Controller):
     elif self.mode == "select" and self.selected == 1:
       self.selected_img = selected_img
       self.deselected_img = deselected_img
-      Controller.current_can.paint_canvas(img = self.deselected_img)
     elif self.mode == "select" and self.selected == 2:
-      self.select_reset()
+      self.select_confirm()
 
   def select_reset(self):
     self.selected = 0
-    if self.alert is not None:
-      self.alert.destroy()
-    else:
-      Controller.current_can.canvas.config(cursor="arrow")
+    self.alert.destroy()
+    Controller.current_can.canvas.config(cursor="arrow")
 
     Controller.current_can.canvas.delete(self.select_range)
     Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
     Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
     Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)
+
+  def select_confirm(self):
+    alert = tk.Toplevel(self.window)
+    alert.geometry("300x100+450+400")
+    alert.resizable(False, False)
+    self.alert = alert
+    _var = tk.StringVar()
+    _var.set("이동하시겠습니까?")
+    alert_msg = tk.Message(self.alert, textvariable=_var, width=300, aspect=300, anchor="center")
+    alert_msg.pack(pady=20)
+    btn_confirm = tk.Button(alert, text="예", padx=22, command=self.select_reset)
+    btn_confirm.place(relx=0.2, rely=0.6)
+    btn_cancel = tk.Button(alert, text="아니오", padx=10, command=self.select_cancel)
+    btn_cancel.place(relx=0.57, rely=0.6)
+
+  def select_cancel(self):
+    _temp = Controller.current_can
+    c_img = copy.copy(_temp.canvas_img)
+    Controller.current_can.paint_canvas(img = c_img, mode="c")
+    self.select_reset()
+
+
