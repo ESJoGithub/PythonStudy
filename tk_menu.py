@@ -145,18 +145,18 @@ class menubar(Methods):
     self.btn4 = tk.Button(sb_mn, image=self.btn_img4, width=35, height=35, command=lambda:self.select_event(mode="crop"),
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn4.grid(row=4, column=1, padx=5, pady=7)
-    self.btn5 = tk.Button(sb_mn, image=self.btn_img5, width=35, height=35,
+    self.btn5 = tk.Button(sb_mn, image=self.btn_img5, width=35, height=35, command=lambda:self.mk_shape(mode=2),
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn5.grid(row=5, column=1, padx=5, pady=7)
     self.btn6 = tk.Menubutton(sb_mn, image=self.btn_img6, width=35, height=35, direction="right",
                           relief="flat", activebackground="gray90")
     self.btn6.grid(row=6, column=1, padx=5, pady=7)
     btn_menu6 = tk.Menu(self.btn6, tearoff=0)
-    btn_menu6.add_command(image=self.btn_img6_1)
-    btn_menu6.add_command(image=self.btn_img6_2)
-    btn_menu6.add_command(image=self.btn_img6_3)
+    btn_menu6.add_command(image=self.btn_img6_1, command=lambda:self.mk_shape(mode=3))
+    btn_menu6.add_command(image=self.btn_img6_2, command=lambda:self.mk_shape(mode=4))
+    btn_menu6.add_command(image=self.btn_img6_3, command=lambda:self.mk_shape(mode=5))
     self.btn6["menu"] = btn_menu6
-    self.btn7 = tk.Button(sb_mn, image=self.btn_img7, width=35, height=35,
+    self.btn7 = tk.Button(sb_mn, image=self.btn_img7, width=35, height=35, command=lambda:self.mk_shape(mode=1),
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn7.grid(row=7, column=1, padx=5, pady=7)
     self.btn8 = tk.Button(sb_mn, image=self.btn_img8, width=35, height=35,

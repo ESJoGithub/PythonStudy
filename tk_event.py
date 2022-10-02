@@ -1,6 +1,6 @@
 import tkinter as tk
 import copy
-import cv2
+from matplotlib.pyplot import fill
 import numpy as np
 from tk_controller import Controller
 
@@ -15,6 +15,7 @@ class Widget_Event(Controller):
     self.dragging = False
     self.count = count
     self.select_range = None
+    self.shape = None
     self.r_frame = None
     self.alert = None
     self.call = True
@@ -22,6 +23,7 @@ class Widget_Event(Controller):
     self.selected = 0
     self.mode = "select"
     self.color = "black"
+    self.px = 1
     self.selected_img = None
     self.deselected_img = None
     self.s_x = 0
@@ -32,6 +34,7 @@ class Widget_Event(Controller):
 
   def click(self, event):
     self.dragging = True
+    self.call = False
     self.start = [event.x, event.y]
     self.drag_start = [event.x_root, event.y_root]
 
@@ -276,3 +279,37 @@ class Widget_Event(Controller):
         Controller.current_can.canvas.unbind("<Button-3>", Controller.binding4)
     except:
       pass
+
+  def drag_fig(self, event):
+    if self.dragging:
+      if self.mode == 1 :
+        Controller.current_can.canvas.create_line(self.start[0], self.start[1], event.x, event.y, fill=self.color, width=self.px, smooth=True)
+        self.start = [event.x, event.y]
+      elif self.mode == 2 :
+        Controller.current_can.canvas.delete(self.shape)
+        self.shape = Controller.current_can.canvas.create_line(self.start[0], self.start[1], event.x, event.y, fill=self.color, width=self.px)
+      elif self.mode == 3:
+        s_x, s_y = self.start
+        e_x = event.x
+        e_y = event.y
+        if s_x > e_x:
+          temp = s_x
+          s_x = e_x
+          e_x = temp
+        if s_y > e_y:
+          temp = s_y
+          s_y = e_y
+          e_y = temp
+        point_x = e_x - s_x
+        Controller.current_can.canvas.delete(self.shape)
+        self.shape = Controller.current_can.canvas.create_polygon(point_x, s_y, s_x, e_y, e_x, e_y, outline=self.color, fill="white", width=self.px)
+      elif self.mode == 4:
+        Controller.current_can.canvas.delete(self.shape)
+        self.shape = Controller.current_can.canvas.create_rectangle(self.start[0], self.start[1], event.x, event.y, outline=self.color, width=self.px)
+      elif self.mode == 5:
+        Controller.current_can.canvas.delete(self.shape)
+        self.shape = Controller.current_can.canvas.create_oval(self.start[0], self.start[1], event.x, event.y, outline=self.color, width=self.px)
+      
+  def release_fig(self, event):
+    Controller.current_can.canvas_save()
+    self.select_reset()

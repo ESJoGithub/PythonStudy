@@ -24,6 +24,8 @@ class Methods(Controller):
     self.count_frames = 0
     self.event_call = False
     self.Event = None
+    self._color = None
+
 
   def reset(self):
     self.gray_chk = False
@@ -45,7 +47,7 @@ class Methods(Controller):
     Controller.current_can = canvas_widget
     
     canvas_widget.get_canvas()                                                                # make canvas
-    Controller.get_subwind(subwin=copy.copy(canvas_widget), count = self.count_frames)        # add to sub_windows dict
+    Controller.get_subwin(subwin=copy.copy(canvas_widget), count = self.count_frames)        # add to sub_windows dict
 
   def file_open(self):
     """New Image Open"""
@@ -114,7 +116,7 @@ class Methods(Controller):
     btn_cancel = tk.Button(save_alert, text="아니오", padx=10, command=save_alert.destroy)
     btn_cancel.place(relx=0.57, rely=0.6)
 
-  def select_event(self, mode="select"):
+  def event_clear(self):
     if self.event_call:
       img = Controller.current_can.canvas_img
       Controller.current_can.paint_canvas(img, mode="c")
@@ -136,6 +138,8 @@ class Methods(Controller):
     except:
       pass
 
+  def select_event(self, mode="select"):
+    self.event_clear()
     select_Event = Widget_Event(self.window)
     self.Event = select_Event
     self.event_call = True
@@ -171,8 +175,21 @@ class Methods(Controller):
     typed_img = cv2.putText(c_img, val, (s_x, s_y))
     Controller.current_can.paint_canvas(typed_img)
 
-  def make_line(self):
-    pass
+  def mk_shape(self, mode=0):
+    self.event_clear()
+
+    fig_Event = Widget_Event(self.window)
+    self.Event = fig_Event
+    self.event_call = True
+    fig_Event.mode = mode
+    self.color_choice()
+    fig_Event.color = self._color[1]
+
+    Controller.current_can.canvas.config(cursor="tcross")
+    Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", fig_Event.click)
+    Controller.binding2 = Controller.current_can.canvas.bind("<B1-Motion>", fig_Event.drag_fig)
+    Controller.binding3 = Controller.current_can.canvas.bind("<ButtonRelease-1>", fig_Event.release_fig)
+    self.event_call = fig_Event.call
 
   def cancel(self):
     """작업 취소 내역"""
@@ -643,8 +660,7 @@ class Methods(Controller):
     Controller.current_can.paint_canvas(_sharpen)
 
   def color_choice(self):
-    cp = colorchooser.askcolor()
-    cp.pack()
+    self._color = colorchooser.askcolor()
 
   def close(self):
     self.window.quit()
