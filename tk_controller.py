@@ -6,7 +6,7 @@ class Controller:
   global binding2
   global binding3
   global binding4
-
+  
   sub_windows = {}
   current_can = object
 

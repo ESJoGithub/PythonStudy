@@ -85,7 +85,7 @@ class Canvas(Widget):
 
   def paint_canvas(self, img, mode=None):
     c_img = copy.copy(self.canvas_img)
-    if mode != "c":
+    if mode != "c" :
       self.cancel_li.append(c_img)
     elif mode == "c":
       self.reload_li.append(c_img)
@@ -122,7 +122,7 @@ class Canvas(Widget):
     self.canvas.configure(width=self.width, height=self.height, relief="raised")
     self.canvas.create_image(self.width//2, self.height//2, image=self.paper)
 
-  def move_paint(self, img_mv, img_bg=None, p_x=0, p_y=0, save=False):
+  def move_img(self, img_mv, img_bg=None, p_x=0, p_y=0, save=False):
     self.canvas.delete("all")
     if img_bg is not None:
       tk_img_bg = cv2.cvtColor(img_bg, cv2.COLOR_BGR2RGB)
@@ -135,11 +135,14 @@ class Canvas(Widget):
     photo = Image.fromarray(tk_img)   
     self.paper = ImageTk.PhotoImage(image=photo, master=self.canvas)
     self.canvas.create_image(p_x, p_y, image=self.paper)
-    if save :
-      box = (self.canvas.winfo_rootx()-3, self.canvas.winfo_rooty()-3, 
-            self.canvas.winfo_rootx() + self.canvas.winfo_reqwidth(), 
-            self.canvas.winfo_rooty() + self.canvas.winfo_reqheight())
-      img = ImageGrab.grab(box)
-      img = np.asarray(img)
-      img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-      self.paint_canvas(img)
+    if save:
+      self.canvas_save()
+
+  def canvas_save(self):
+    point_range = (self.canvas.winfo_rootx()-4, self.canvas.winfo_rooty()-4, 
+                    self.canvas.winfo_rootx() + self.canvas.winfo_reqwidth(), 
+                    self.canvas.winfo_rooty() + self.canvas.winfo_reqheight())
+    temp_img = ImageGrab.grab(point_range)
+    temp_img = np.asarray(temp_img)
+    temp_img = cv2.cvtColor(temp_img, cv2.COLOR_RGB2BGR)
+    self.paint_canvas(temp_img)

@@ -20,7 +20,7 @@ class Widget():
     main_frame.place(x=self.x, y = self.y)
     f_Event = Widget_Event(self.window, count = count)
     f_Event.set_widget(self.widget)
-    frame1 = tk.Frame(main_frame, relief="solid", background="white")
+    frame1 = tk.Frame(main_frame, relief="raised", background="white")
     frame1.pack(side="top", fill="x")
     if mode== "canvas":
       frame1.bind("<Button-1>", f_Event.canvas_click)

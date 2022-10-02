@@ -13,6 +13,7 @@ class Run_widget(Widget):
     self.spin = None
     self.spin1 = None
     self.spin2 = None
+    self.txt_box = None
     self.check = True
     self.x = self.window.winfo_width() - ((count//6+1)*(width+x))
     self.y = self.window.winfo_y() - self.window.winfo_rooty() + (count%6*height) + y
@@ -28,6 +29,21 @@ class Run_widget(Widget):
     filter_button = tk.Button(frame2, text="확인")
     filter_button.grid(row=2, column=3, pady=7)
     return filter_button
+
+  def get_text(self, title="문자입력창"):
+    frame2 = self.get_widget(title)[1]
+    txt_frame = tk.Frame(frame2, padx=5, pady=5)
+    txt_frame.pack(side="top")
+    btn_frame = tk.Frame(frame2, padx=5, pady=5)
+    btn_frame.pack(side="bottom")
+    scroll_txt = tk.Scrollbar(txt_frame)
+    scroll_txt.pack(side="right", fill="y")
+    self.txt_box = tk.Text(txt_frame, width=40, height=15, yscrollcommand=scroll_txt.set, relief="sunken")
+    self.txt_box.pack(side="left")
+    scroll_txt.config(command=self.txt_box.yview)
+    txt_button = tk.Button(btn_frame, text="확인")
+    txt_button.pack(side="top")
+    return txt_button
 
   def get_radio(self, title = "RGB -> Gray"):
     frame2 = self.get_widget(title)[1]

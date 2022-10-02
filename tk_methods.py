@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import colorchooser
 from tkinter import filedialog
 from tk_canvas import Canvas
 from tk_run_widgets import Run_widget
@@ -22,6 +23,7 @@ class Methods(Controller):
     self.wg_count = 0
     self.count_frames = 0
     self.event_call = False
+    self.Event = None
 
   def reset(self):
     self.gray_chk = False
@@ -115,36 +117,62 @@ class Methods(Controller):
   def select_event(self, mode="select"):
     if self.event_call:
       img = Controller.current_can.canvas_img
-      Controller.current_can.paint_canvas(img)
+      Controller.current_can.paint_canvas(img, mode="c")
 
     try:
-      if Controller.binding1 is not None:
-        Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
-      if Controller.binding2 is not None:
-        Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
-      if Controller.binding3 is not None:
-        Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)
-      if Controller.binding4 is not None:
-        Controller.current_can.canvas.unbind("<Button-3>", Controller.binding4)
+      Controller.current_can.canvas.unbind("<Button-1>", Controller.binding1)
+    except: 
+      pass
+    try:
+      Controller.current_can.canvas.unbind("<B1-Motion>", Controller.binding2)
+    except:
+      pass
+    try:
+      Controller.current_can.canvas.unbind("<ButtonRelease-1>", Controller.binding3)
+    except:
+      pass
+    try:
+      Controller.current_can.canvas.unbind("<Button-3>", Controller.binding4)
     except:
       pass
 
     select_Event = Widget_Event(self.window)
+    self.Event = select_Event
     self.event_call = True
     select_Event.mode = mode
-    if mode == "select":
-      _cursor = "lr_angle"
+    if mode == "select" or mode == "copy":
+      _cursor = "sizing"
       select_Event.color = "gray50"
       Controller.binding3 = Controller.current_can.canvas.bind("<ButtonRelease-1>", select_Event.select_released)
     elif mode == "crop":
       _cursor = "tcross"
       select_Event.color = "black"
       Controller.binding3 = Controller.current_can.canvas.bind("<ButtonRelease-1>", select_Event.crop_released)
+    elif mode == "text":
+      Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", select_Event.select_click)
+      Controller.current_can.canvas.config(cursor="xterm")
+      self.event_call = select_Event.call
+      self.text_box()
+      return
+
     Controller.current_can.canvas.config(cursor=_cursor)
     Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", select_Event.select_click)
     Controller.binding2 = Controller.current_can.canvas.bind("<B1-Motion>", select_Event.select_drag)
-    Controller.binding4 = Controller.current_can.canvas.bind("Button-3>", select_Event.select_right_click)
     self.event_call = select_Event.call
+
+  def text_box(self):
+    _widget = Run_widget(self.window, count=self.wg_count)
+    self.wg_count += 2
+    txt_btn = _widget.get_text()
+    txt_btn.config(command=lambda : self.type_text(_widget.txt_box.get(1.0, "end"), self.Event.s_x, self.Event.s_y))
+
+  def type_text(self, val, s_x = 0, s_y = 0):
+    c_img = Controller.current_can.canvas_img.copy()
+    typed_img = cv2.putText(c_img, val, (s_x, s_y))
+    Controller.current_can.paint_canvas(typed_img)
+
+  def make_line(self):
+    pass
 
   def cancel(self):
     """작업 취소 내역"""
@@ -613,6 +641,10 @@ class Methods(Controller):
     _sharpen = _sharpen.clip(0, 255)
     _sharpen = _sharpen.astype(np.uint8)
     Controller.current_can.paint_canvas(_sharpen)
+
+  def color_choice(self):
+    cp = colorchooser.askcolor()
+    cp.pack()
 
   def close(self):
     self.window.quit()

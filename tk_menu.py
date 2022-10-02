@@ -1,6 +1,7 @@
+from cProfile import label
 import tkinter as tk
+from turtle import width
 from tk_methods import Methods
-from tk_controller import Controller
 from PIL import Image, ImageTk
 
 class menubar(Methods):
@@ -16,6 +17,9 @@ class menubar(Methods):
     self.btn_img6 = None
     self.btn_img7 = None
     self.btn_img8 = None
+    self.btn_img6_1 = None
+    self.btn_img6_2 = None
+    self.btn_img6_3 = None
     self.btn1 = None
     self.btn2 = None
     self.btn3 = None
@@ -44,8 +48,9 @@ class menubar(Methods):
     menu_2.add_command(label="다시 실행", command= self.reload)
     menu_2.add_separator()
     menu_2.add_command(label="잘라내기", command=lambda:self.select_event(mode="crop"))
-    menu_2.add_command(label="복사")
-    menu_2.add_command(label="붙여넣기")
+    menu_2.add_command(label="복사", command=self.select_event)
+    menu_2.add_separator()
+    menu_2.add_command(label="메뉴바", command= self.run_submenu)
     menubar.add_cascade(label="편집", menu=menu_2)
 
     menu_3 = tk.Menu(menubar, tearoff=0)  
@@ -65,21 +70,20 @@ class menubar(Methods):
     menu_3.add_command(label="이미지 180도 회전", command=lambda: self.rotation(mode=2))
     menu_3.add_command(label="이미지 90도 시계 방향 회전", command=lambda: self.rotation(mode=1))
     menu_3.add_command(label="이미지 90도 시계 반대 방향 회전", command=lambda: self.rotation(mode=3))
-    menu_3.add_command(label="이미지 임의 각도 회전")
     menu_3.add_separator()
     menu_3.add_command(label="상하반전", command=lambda: self.symmetric(mode="x"))
     menu_3.add_command(label="좌우반전", command=lambda: self.symmetric(mode="y"))
     menubar.add_cascade(label="이미지", menu=menu_3)
 
     menu_4= tk.Menu(menubar, tearoff=0)      
-    menu_4.add_command(label="문자삽입")
+    menu_4.add_command(label="문자삽입", command=self.text_box)
     menu_4.add_command(label="글꼴")
     menubar.add_cascade(label="문자", menu=menu_4)
 
     menu_5 = tk.Menu(menubar, tearoff=0)      
     menu_5.add_command(label="흐리게", command=self.set_blur)
     menu_5.add_command(label="선명하게", command=self.sharpen)
-    menu_5.add_command(label="색상추출")
+    menu_5.add_command(label="색상추출", command=self.color_choice)
     menubar.add_cascade(label="필터", menu=menu_5)
 
     menu_6 = tk.Menu(menubar, tearoff=0)
@@ -103,12 +107,18 @@ class menubar(Methods):
     btn_img6 = Image.open("./img/06_shapes.png")
     btn_img7 = Image.open("./img/07_pen.png")
     btn_img8 = Image.open("./img/08_dopper.png")
+    btn_img6_1 = Image.open("./img/06_01_triangle.png")
+    btn_img6_2 = Image.open("./img/06_02_rectangle.png")
+    btn_img6_3 = Image.open("./img/06_03_circle.png")
     btn_img1 = btn_img1.resize((30, 30))
     btn_img2 = btn_img2.resize((30, 30))
     btn_img3 = btn_img3.resize((30, 30))
     btn_img4 = btn_img4.resize((30, 30))
     btn_img5 = btn_img5.resize((30, 30))
     btn_img6 = btn_img6.resize((30, 30))
+    btn_img6_1 = btn_img6_1.resize((20, 20))
+    btn_img6_2 = btn_img6_2.resize((20, 20))
+    btn_img6_3 = btn_img6_3.resize((20, 20))
     btn_img7 = btn_img7.resize((30, 30))
     btn_img8 = btn_img8.resize((30, 30))
     self.btn_img1 = ImageTk.PhotoImage(btn_img1)
@@ -117,6 +127,9 @@ class menubar(Methods):
     self.btn_img4 = ImageTk.PhotoImage(btn_img4)
     self.btn_img5 = ImageTk.PhotoImage(btn_img5)
     self.btn_img6 = ImageTk.PhotoImage(btn_img6)
+    self.btn_img6_1 = ImageTk.PhotoImage(btn_img6_1)
+    self.btn_img6_2 = ImageTk.PhotoImage(btn_img6_2)
+    self.btn_img6_3 = ImageTk.PhotoImage(btn_img6_3)
     self.btn_img7 = ImageTk.PhotoImage(btn_img7)
     self.btn_img8 = ImageTk.PhotoImage(btn_img8)
 
@@ -135,9 +148,14 @@ class menubar(Methods):
     self.btn5 = tk.Button(sb_mn, image=self.btn_img5, width=35, height=35,
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn5.grid(row=5, column=1, padx=5, pady=7)
-    self.btn6 = tk.Button(sb_mn, image=self.btn_img6, width=35, height=35,
-                          relief="flat", overrelief="sunken", activebackground="gray90")
+    self.btn6 = tk.Menubutton(sb_mn, image=self.btn_img6, width=35, height=35, direction="right",
+                          relief="flat", activebackground="gray90")
     self.btn6.grid(row=6, column=1, padx=5, pady=7)
+    btn_menu6 = tk.Menu(self.btn6, tearoff=0)
+    btn_menu6.add_command(image=self.btn_img6_1)
+    btn_menu6.add_command(image=self.btn_img6_2)
+    btn_menu6.add_command(image=self.btn_img6_3)
+    self.btn6["menu"] = btn_menu6
     self.btn7 = tk.Button(sb_mn, image=self.btn_img7, width=35, height=35,
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn7.grid(row=7, column=1, padx=5, pady=7)
