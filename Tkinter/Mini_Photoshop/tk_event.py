@@ -302,7 +302,7 @@ class Widget_Event(Controller):
           e_y = temp
         point_x = e_x - s_x
         Controller.current_can.canvas.delete(self.shape)
-        self.shape = Controller.current_can.canvas.create_polygon(point_x, s_y, s_x, e_y, e_x, e_y, outline=self.color, fill="white", width=self.px)
+        self.shape = Controller.current_can.canvas.create_polygon(point_x, s_y, s_x, e_y, e_x, e_y, outline=self.color, width=self.px)
       elif self.mode == 4:
         Controller.current_can.canvas.delete(self.shape)
         self.shape = Controller.current_can.canvas.create_rectangle(self.start[0], self.start[1], event.x, event.y, outline=self.color, width=self.px)

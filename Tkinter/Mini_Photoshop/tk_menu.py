@@ -49,8 +49,6 @@ class menubar(Methods):
     menu_2.add_separator()
     menu_2.add_command(label="잘라내기", command=lambda:self.select_event(mode="crop"))
     menu_2.add_command(label="복사", command=self.select_event)
-    menu_2.add_separator()
-    menu_2.add_command(label="메뉴바", command= self.run_submenu)
     menubar.add_cascade(label="편집", menu=menu_2)
 
     menu_3 = tk.Menu(menubar, tearoff=0)  
@@ -87,6 +85,8 @@ class menubar(Methods):
     menubar.add_cascade(label="필터", menu=menu_5)
 
     menu_6 = tk.Menu(menubar, tearoff=0)
+    menu_6.add_command(label="메뉴바", command= self.run_submenu)
+    menu_6.add_separator()
     menu_6.add_command(label="ESJo")
     menubar.add_cascade(label="정보", menu=menu_6)
     self.window.config(menu=menubar) 
