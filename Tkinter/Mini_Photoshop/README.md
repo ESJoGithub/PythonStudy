@@ -99,16 +99,29 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 
 ## 프로젝트 소개
 ![슬라이드3](https://user-images.githubusercontent.com/101074063/195031028-6c545b95-38e5-4112-a07a-2dc06a40de32.PNG)
+---
 ![슬라이드4](https://user-images.githubusercontent.com/101074063/195031033-ab9c15f1-bf11-49b9-be89-18bed8a3f6d5.PNG)
+---
 ![슬라이드5](https://user-images.githubusercontent.com/101074063/195031037-71a2e2c0-d44e-4670-8a91-72fc44298ba2.PNG)
+---
 ![슬라이드6](https://user-images.githubusercontent.com/101074063/195031040-af417eda-3706-4528-bbaf-2007f9ae3a22.PNG)
+---
 ![슬라이드7](https://user-images.githubusercontent.com/101074063/195031053-86c827c1-11b7-40b8-bd66-dcdbcd26ac70.PNG)
+---
 ![슬라이드8](https://user-images.githubusercontent.com/101074063/195031058-6479fc4d-3a06-443b-8e24-8cf689020ebc.PNG)
+---
 ![슬라이드9](https://user-images.githubusercontent.com/101074063/195031062-49378902-100a-47b2-b0c9-310510d0cffc.PNG)
+---
 ![슬라이드10](https://user-images.githubusercontent.com/101074063/195031066-6d5942fb-9d5d-4454-b647-72d23f998648.PNG)
+---
 ![슬라이드11](https://user-images.githubusercontent.com/101074063/195031071-83d85000-5fde-42b9-bb94-031507d5802f.PNG)
+---
 ![슬라이드12](https://user-images.githubusercontent.com/101074063/195031074-146ed821-cbb1-46f7-8181-748d53125dba.PNG)
+---
 ![슬라이드13](https://user-images.githubusercontent.com/101074063/195031076-df5a4214-66a7-44d3-b76f-bc46294eb617.PNG)
+---
 ![슬라이드14](https://user-images.githubusercontent.com/101074063/195031080-74662774-6bd1-4fac-a522-7cffc64f8568.PNG)
+---
 ![슬라이드15](https://user-images.githubusercontent.com/101074063/195031082-e9e5057f-4386-46cc-a3d8-69515bc264a8.PNG)
+---
 ![슬라이드16](https://user-images.githubusercontent.com/101074063/195031084-f1c56bc3-de5b-4d24-aa44-1a3fc6e6c235.PNG)
