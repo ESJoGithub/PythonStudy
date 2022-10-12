@@ -52,7 +52,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 >
 > https://power-of-optimism.tistory.com/38
 
-> __시소코드랩 - tkinter를 이용한 GUI 프로그래밍(Bizegrip)__
+> __시소코드랩 - tkinter를 이용한 GUI 프로그래밍(Biding)__
 >
 > https://m.blog.naver.com/sisosw/221412835955
 
