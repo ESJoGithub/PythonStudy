@@ -46,7 +46,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 
 
 #### __Issue 04. 내부 윈도우로 만든 프레임 객체 배치(z좌표)__
-프레임 저장을 위한 dict 생성, event 발생 시 tkraise()함수 활용하여 호출
+프레임 저장을 위한 dict 생성, event 발생 시 tkraise()함수 활용하여 화면 맨 앞으로 배치
 
 > __[Tkinter] 화면전환__
 >
