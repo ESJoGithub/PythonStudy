@@ -98,7 +98,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 ---
 
 ## 프로젝트 소개
-![슬라이드3](https://user-images.githubusercontent.com/101074063/195031028-6c545b95-38e5-4112-a07a-2dc06a40de32.PNG)
+![슬라이드3](https://user-images.githubusercontent.com/101074063/195504945-12e844e4-d781-4ebb-a251-7a203d4b639d.PNG)
 ---
 ![슬라이드4](https://user-images.githubusercontent.com/101074063/195031033-ab9c15f1-bf11-49b9-be89-18bed8a3f6d5.PNG)
 ---
