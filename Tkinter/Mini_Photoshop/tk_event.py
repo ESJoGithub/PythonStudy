@@ -1,6 +1,5 @@
 import tkinter as tk
 import copy
-from matplotlib.pyplot import fill
 import numpy as np
 from tk_controller import Controller
 

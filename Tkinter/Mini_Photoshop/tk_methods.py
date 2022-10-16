@@ -1,6 +1,9 @@
+from re import M, X
 import tkinter as tk
 from tkinter import colorchooser
 from tkinter import filedialog
+
+from soupsieve import select
 from tk_canvas import Canvas
 from tk_run_widgets import Run_widget
 from tk_event import Widget_Event
@@ -24,7 +27,8 @@ class Methods(Controller):
     self.count_frames = 0
     self.event_call = False
     self.Event = None
-    self._color = None
+    self._color = "black"
+    self.text = None
 
 
   def reset(self):
@@ -152,12 +156,6 @@ class Methods(Controller):
       _cursor = "tcross"
       select_Event.color = "black"
       Controller.binding3 = Controller.current_can.canvas.bind("<ButtonRelease-1>", select_Event.crop_released)
-    elif mode == "text":
-      Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", select_Event.select_click)
-      Controller.current_can.canvas.config(cursor="xterm")
-      self.event_call = select_Event.call
-      self.text_box()
-      return
 
     Controller.current_can.canvas.config(cursor=_cursor)
     Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", select_Event.select_click)
@@ -165,15 +163,24 @@ class Methods(Controller):
     self.event_call = select_Event.call
 
   def text_box(self):
+    t_x = 0
+    t_y = 0
+    def select_Text(event):
+      nonlocal t_x , t_y
+      t_x = event.x
+      t_y = event.y
+    Controller.binding1 = Controller.current_can.canvas.bind("<Button-1>", select_Text)
+    Controller.current_can.canvas.config(cursor="xterm")
+
     _widget = Run_widget(self.window, count=self.wg_count)
     self.wg_count += 2
     txt_btn = _widget.get_text()
-    txt_btn.config(command=lambda : self.type_text(_widget.txt_box.get(1.0, "end"), self.Event.s_x, self.Event.s_y))
+    txt_btn.config(command=lambda : self.type_text(_widget.txt_box.get(1.0, "end"), t_x, t_y))
 
   def type_text(self, val, s_x = 0, s_y = 0):
-    c_img = Controller.current_can.canvas_img.copy()
-    typed_img = cv2.putText(c_img, val, (s_x, s_y))
-    Controller.current_can.paint_canvas(typed_img)
+    if self.text is not None:
+      Controller.current_can.canvas.delete(self.text)
+    self.text = Controller.current_can.canvas.create_text(s_x, s_y, text=val,  font = ("맑은고딕", 10), fill =self._color[1])
 
   def mk_shape(self, mode=0):
     self.event_clear()
@@ -661,6 +668,7 @@ class Methods(Controller):
 
   def color_choice(self):
     self._color = colorchooser.askcolor()
+    print(self._color)
 
   def close(self):
     self.window.quit()

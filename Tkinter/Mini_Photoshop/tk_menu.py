@@ -1,6 +1,4 @@
-from cProfile import label
 import tkinter as tk
-from turtle import width
 from tk_methods import Methods
 from PIL import Image, ImageTk
 
@@ -159,6 +157,6 @@ class menubar(Methods):
     self.btn7 = tk.Button(sb_mn, image=self.btn_img7, width=35, height=35, command=lambda:self.mk_shape(mode=1),
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn7.grid(row=7, column=1, padx=5, pady=7)
-    self.btn8 = tk.Button(sb_mn, image=self.btn_img8, width=35, height=35,
+    self.btn8 = tk.Button(sb_mn, image=self.btn_img8, width=35, height=35, command=self.color_choice,
                           relief="flat", overrelief="sunken", activebackground="gray90")
     self.btn8.grid(row=8, column=1, padx=5, pady=7)
