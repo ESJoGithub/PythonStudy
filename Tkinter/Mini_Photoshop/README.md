@@ -11,7 +11,7 @@
 > https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/index.html
 
 
-#### __Issue 01. 캔버스에 이미지가 그려지지 않음__
+### __Issue 01. 캔버스에 이미지가 그려지지 않음__
 PhotoImage를 self.paper라는 변수로 받아주면서 해결
 
 > __Python tkinter : Canvas, PhotoImage, create_image__
@@ -23,14 +23,14 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 > https://stackoverflow.com/questions/56606001/image-is-not-showing-up-on-tkinter-canvas
 
 
-#### __Issue 02. 파일 열기 코드__
+### __Issue 02. 파일 열기 코드__
 
 >__파이썬[Python] 030 tkinter 활용 Filedialog(Open, Save, Directory)__
 >
 > https://appia.tistory.com/111
 
 
-#### __Issue 03. 사이즈 그립 위치 설정 등 좌표 문제__
+### __Issue 03. 사이즈 그립 위치 설정 등 좌표 문제__
 
 > __시소코드랩 - tkinter를 이용한 GUI 프로그래밍(Sizegrip)__
 >
@@ -45,7 +45,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 > https://stackoverflow.com/questions/47490851/tkinter-resize-text-widget-sizegrip-for-text-widget
 
 
-#### __Issue 04. 내부 윈도우로 만든 프레임 객체 배치(z좌표)__
+### __Issue 04. 내부 윈도우로 만든 프레임 객체 배치(z좌표)__
 프레임 저장을 위한 dict 생성, event 발생 시 tkraise()함수 활용하여 화면 맨 앞으로 배치
 
 > __[Tkinter] 화면전환__
@@ -57,7 +57,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 > https://m.blog.naver.com/sisosw/221412835955
 
 
-#### __Issue 05. 이미지 처리 프로세스__
+### __Issue 05. 이미지 처리 프로세스__
 
 > __opencv 입문하기 7-2편 HSV, 특정 색상 추출(inRange)__
 >
@@ -68,7 +68,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 > https://junstar92.tistory.com/404
 
 
-#### __Issue 06. 잘라내기/복사/붙여넣기/도형그리기 관련__
+### __Issue 06. 잘라내기/복사/붙여넣기/도형그리기 관련__
 
 > __stackoverflow - Deleting and changing a tkinter event binding__
 >
@@ -83,7 +83,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 > https://stackoverflow.com/questions/23690993/how-do-we-delete-a-shape-thats-already-been-created-in-tkinter-canvas
 
 
-#### __Issue 07. 메뉴바 생성 관련__
+### __Issue 07. 메뉴바 생성 관련__
 
 > __Python,tkinter Menubutton__
 > 
