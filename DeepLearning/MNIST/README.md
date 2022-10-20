@@ -1,3 +1,5 @@
+![포트폴리오_v1 0_하이테크과정_조은솔](https://user-images.githubusercontent.com/101074063/196930806-f05c5e1a-55ba-4f3c-b90e-87baad0b7c28.png)
+---
 ![슬라이드17](https://user-images.githubusercontent.com/101074063/195986028-34e0155b-8e18-40b3-8171-28fd20e7cc9d.PNG)
 ---
 ![슬라이드18](https://user-images.githubusercontent.com/101074063/195986031-d14b5e47-afea-4926-8c0f-3c071b70251e.PNG)
