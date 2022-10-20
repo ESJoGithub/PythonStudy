@@ -1,3 +1,5 @@
+![포트폴리오_v1 0_하이테크과정_조은솔](https://user-images.githubusercontent.com/101074063/196931117-c9e25e8a-59b0-4d2b-8926-ff9a9f738791.png)
+---
 ## 참고사이트
 
 ### __Tkinter 기능 소개__
@@ -98,6 +100,7 @@ PhotoImage를 self.paper라는 변수로 받아주면서 해결
 ---
 
 ## 프로젝트 소개
+
 ![슬라이드3](https://user-images.githubusercontent.com/101074063/195504945-12e844e4-d781-4ebb-a251-7a203d4b639d.PNG)
 ---
 ![슬라이드4](https://user-images.githubusercontent.com/101074063/195031033-ab9c15f1-bf11-49b9-be89-18bed8a3f6d5.PNG)
