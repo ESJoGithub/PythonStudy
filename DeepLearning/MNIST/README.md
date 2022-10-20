@@ -24,20 +24,27 @@
 ---
 ![슬라이드29](https://user-images.githubusercontent.com/101074063/195986049-6301631f-1a3b-4d32-a6cd-014451814862.PNG)
 ---
+[1차 - Activation / Optimizer / Batch size 변경](https://github.com/ESJoGithub/PythonStudy/blob/main/DeepLearning/MNIST/Keras_220920_MNIST_%EC%8B%A4%EC%8A%B502.ipynb)
 ![슬라이드30](https://user-images.githubusercontent.com/101074063/195986052-b28284b1-9409-4305-b9f8-cac265294e01.PNG)
 ---
 ![슬라이드31](https://user-images.githubusercontent.com/101074063/195986053-735bbed9-a26f-4d70-a244-de102031e680.PNG)
 ---
 ![슬라이드32](https://user-images.githubusercontent.com/101074063/195986054-64bd23da-451e-4900-9246-d8ac0f4e6732.PNG)
 ---
+[2차 - Callback / Kernel_regularizer / Dropout 적용](https://github.com/ESJoGithub/PythonStudy/blob/main/DeepLearning/MNIST/Keras_220920_MNIST_%EC%8B%A4%EC%8A%B503.ipynb)
 ![슬라이드33](https://user-images.githubusercontent.com/101074063/195986056-35627e6f-9c53-4ce8-9ec0-0d011d2b3b19.PNG)
 ---
 ![슬라이드34](https://user-images.githubusercontent.com/101074063/195986057-9dc178c7-83ec-4107-83e4-7cda70a564ef.PNG)
 ---
 ![슬라이드35](https://user-images.githubusercontent.com/101074063/195986058-3fb6aeb8-bbb7-4fa2-ba64-ef58fd0be9ee.PNG)
 ---
+3차 – 모델 구조 변경 / Dropout, Callback 적용 
+[SGD](https://github.com/ESJoGithub/PythonStudy/blob/main/DeepLearning/MNIST/Keras_220921_MNIST_%EC%8B%A4%EC%8A%B501_01.ipynb)
+[Adam](https://github.com/ESJoGithub/PythonStudy/blob/main/DeepLearning/MNIST/Keras_220921_MNIST_%EC%8B%A4%EC%8A%B502_1.ipynb)
+[RMSprop](https://github.com/ESJoGithub/PythonStudy/blob/main/DeepLearning/MNIST/Keras_220921_MNIST_%EC%8B%A4%EC%8A%B502.ipynb)
 ![슬라이드36](https://user-images.githubusercontent.com/101074063/195986059-75f0e6f5-c1c9-4bf0-81d2-316343d4f2ce.PNG)
 ---
+[4차 - Batch Nomalization 적용](https://github.com/ESJoGithub/PythonStudy/blob/main/DeepLearning/MNIST/Keras_220921_MNIST_%EC%8B%A4%EC%8A%B505_1.ipynb)
 ![슬라이드37](https://user-images.githubusercontent.com/101074063/195986060-f8bcb001-f744-4121-be39-d063ad8601ee.PNG)
 ---
 ![슬라이드38](https://user-images.githubusercontent.com/101074063/195986061-f76cd09f-66cd-41af-b39e-c951a2ac240f.PNG)
