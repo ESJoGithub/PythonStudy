@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>774</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>751</width>
+     <height>541</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>1</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>입력하기</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>20</y>
+       <width>185</width>
+       <height>231</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <family>나눔스퀘어라운드 ExtraBold</family>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>학교분류</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox">
+        <property name="font">
+         <font>
+          <family>나눔바른고딕</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <item>
+         <property name="text">
+          <string>하나고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>용인한국외국어대학교부설고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>인천하늘고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>민족사관고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>북일고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>상산고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>대원외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>대일외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>명덕외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>서울외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>이화여자외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>한영외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>경기외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>고양외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>과천외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>김포외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>동두천외국어</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>성남외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>수원외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>안양외국어고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>서울국제고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>고양국제고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>동탄국제고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>청심국제고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>선덕고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>양정고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>이화여자고</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>한가람고</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <family>나눔스퀘어라운드 ExtraBold</family>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>전공분류</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_2">
+        <property name="font">
+         <font>
+          <family>나눔바른고딕</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <item>
+         <property name="text">
+          <string>없음</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>영어</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>중국어</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>일본어</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>독일어</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>러시아어</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>스페인어</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>프랑스어</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_3">
+        <property name="font">
+         <font>
+          <family>나눔스퀘어라운드 ExtraBold</family>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>진로희망</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_3">
+        <property name="font">
+         <font>
+          <family>나눔바른고딕</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <item>
+         <property name="text">
+          <string>과학</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>의료</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>국제</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>법</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>교육</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>심리</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>경영경제</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>예술</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <family>나눔스퀘어라운드 ExtraBold</family>
+          <pointsize>12</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+          <underline>false</underline>
+         </font>
+        </property>
+        <property name="text">
+         <string>인성경험</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox_4">
+        <property name="font">
+         <font>
+          <family>나눔바른고딕</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <item>
+         <property name="text">
+          <string>임원</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>동아리</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>조별과제</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>교육</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>노인</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>장애인</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>저소득층</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>521</width>
+       <height>481</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>맑은 고딕</family>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>결과보기</string>
+    </attribute>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>731</width>
+       <height>501</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="gridStyle">
+      <enum>Qt::DotLine</enum>
+     </property>
+     <property name="sortingEnabled">
+      <bool>false</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>입력문장</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>유사문장</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>유사도</string>
+      </property>
+     </column>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>560</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>나눔스퀘어라운드 Bold</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>검사하기</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
